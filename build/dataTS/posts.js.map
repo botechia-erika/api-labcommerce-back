@@ -1,0 +1,1 @@
+{"version":3,"file":"posts.js","sourceRoot":"","sources":["../../src/dataTS/posts.ts"],"names":[],"mappings":";;AACA,MAAM,KAAK,GAAY;IACnB;QACE,KAAK,EAAE,iBAAiB;QACxB,KAAK,EAAE,uDAAuD;KAC/D;IAED;QACE,KAAK,EAAE,cAAc;QACrB,KAAK,EAAE,iCAAiC;KACzC;IACD;QACE,KAAK,EAAE,kBAAkB;QACzB,KAAK,EAAE,2BAA2B;KACnC;CACF,CAAA"}
