@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { db } from "../models/knexDB"
 import {v4 as uuidv4} from 'uuid';
+import { createId } from "../helpers/getIdB";
 
 export const getAllUsers =( async (req: Request, res: Response) => {
     try {
@@ -83,16 +84,7 @@ export const createUser = ( async (req: Request, res: Response) => {
         const password = req.body.password
 
         
-        const getIdb = () =>
-        {if(newId == undefined){
-          
-        const idB = uuidv4()
-            return idB
-        }else{
-        const idB = newId
-        return idB
-        }
-    }
+        const id = createId(newId)
 
         if (typeof name !== "string") {
             res.status(400).send({ message: 'nome invalido' })
@@ -109,7 +101,7 @@ export const createUser = ( async (req: Request, res: Response) => {
 
 
         const newAuthor: {id:string, name: string, nickname: string, email: string, password: string } = {
-            id:getIdb(),
+            id,
             name,
             nickname,
             email,

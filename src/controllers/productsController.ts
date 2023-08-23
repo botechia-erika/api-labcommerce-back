@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { db } from "../models/knexDB";
 import { TProductDB } from "../types/types";
 import {v4 as uuidv4} from 'uuid';
-
+import { createId } from "../helpers/getIdB";
 
 export const editProductById = (async (req: Request, res: Response) => {
     try {
@@ -67,16 +67,8 @@ export const createProduct = ( async (req: Request, res: Response) => {
         const description = req.body.description
         const image_url = req.body.image_url as string
         const price = req.body.price as number
-        const getIdb = () =>
-        {if(newId == undefined){
-          
-        const idB = uuidv4()
-            return idB
-        }else{
-        const idB = newId
-        return idB
-        }
-    }
+      
+     
     
         if (typeof name != typeof "string") {
             res.status(400).send({ message: 'nome do produto é invalido' })
@@ -91,9 +83,11 @@ export const createProduct = ( async (req: Request, res: Response) => {
             res.status(400).send("price deve ser numerico")
         }
 
+        const id = createId(newId)
+
 
         const newAccount:TProductDB= {
-            id:getIdb(),
+            id,
             name,
             description,
             image_url,

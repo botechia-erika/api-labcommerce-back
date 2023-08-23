@@ -2,8 +2,10 @@ import { Request, Response } from "express"
 import {v4 as uuidv4} from 'uuid';
 import { accounts } from "../dataTS/accounts";
 import { ACCOUNT_TYPE, TAccount } from "../types/types";
+import { createId } from "../helpers/getIdB";
+
 export const getAllAcounts = ( async (req: Request, res: Response) => {
-  
+
 
     try {
         const q = req.query.q as string | undefined      
@@ -128,19 +130,10 @@ export const createAccount =( async (req: Request, res: Response) => {
         const newType = req.body.type as   ACCOUNT_TYPE.BLACK|ACCOUNT_TYPE.BRONZE | ACCOUNT_TYPE.GOLD | ACCOUNT_TYPE.PLATINUM|ACCOUNT_TYPE.SILVER
 
         
-        const getIdb = () =>
-        {if(newId == undefined){
-          
-        const idB = uuidv4()
-            return idB
-        }else{
-        const idB = newId
-        return idB
-        }
-    }
+      const id = createId(newId)
 
         const newAccount:TAccount = {
-            id: getIdb(),
+            id,
             ownerName: newOwner,
             balance: newBalance,
             type: newType

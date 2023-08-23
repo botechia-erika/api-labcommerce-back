@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyUser = exports.createUser = exports.getUserById = exports.getAllUsers = void 0;
 const knexDB_1 = require("../models/knexDB");
-const uuid_1 = require("uuid");
+const getIdB_1 = require("../helpers/getIdB");
 exports.getAllUsers = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const searchTerm = req.query.q;
@@ -79,16 +79,7 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
         const nickname = req.body.nickname;
         const email = req.body.email;
         const password = req.body.password;
-        const getIdb = () => {
-            if (newId == undefined) {
-                const idB = (0, uuid_1.v4)();
-                return idB;
-            }
-            else {
-                const idB = newId;
-                return idB;
-            }
-        };
+        const id = (0, getIdB_1.createId)(newId);
         if (typeof name !== "string") {
             res.status(400).send({ message: 'nome invalido' });
         }
@@ -102,7 +93,7 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).send("outra senha essa é invalida tente alfa-numerico");
         }
         const newAuthor = {
-            id: getIdb(),
+            id,
             name,
             nickname,
             email,

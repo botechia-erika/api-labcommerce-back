@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editAccount = exports.createAccount = exports.destroyAccount = exports.getAccountById = exports.getAllAcounts = void 0;
-const uuid_1 = require("uuid");
 const accounts_1 = require("../dataTS/accounts");
+const getIdB_1 = require("../helpers/getIdB");
 exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const q = req.query.q;
@@ -107,18 +107,9 @@ exports.createAccount = ((req, res) => __awaiter(void 0, void 0, void 0, functio
         const newOwner = req.body.ownerName;
         const newBalance = req.body.balance;
         const newType = req.body.type;
-        const getIdb = () => {
-            if (newId == undefined) {
-                const idB = (0, uuid_1.v4)();
-                return idB;
-            }
-            else {
-                const idB = newId;
-                return idB;
-            }
-        };
+        const id = (0, getIdB_1.createId)(newId);
         const newAccount = {
-            id: getIdb(),
+            id,
             ownerName: newOwner,
             balance: newBalance,
             type: newType

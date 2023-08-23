@@ -4,6 +4,7 @@ import {v4 as uuidv4} from 'uuid';
 import { TCourse } from "../types/types"
 import { courses } from "../dataTS/courses"
 import { COURSE_STACK } from "../types/types"
+import { createId } from "../helpers/getIdB";
 // inicio aula api-express
 export const getAllCourses = ( async (req: Request, res: Response) => {
   
@@ -62,20 +63,11 @@ export const createCourse =( async (req: Request, res: Response) => {
         const newLessons = req.body.lessons as number || undefined
         const newStack = req.body.stack as  COURSE_STACK.FRONT || COURSE_STACK.BACK
 
-        
-        const getIdb = () =>
-        {if(newId == undefined){
-          
-        const idB = uuidv4()
-            return idB
-        }else{
-        const idB = newId
-        return idB
-        }
-    }
+ 
+        const id = createId(newId)
 
         const newCourse:TCourse = {
-            id: getIdb(),
+            id,
             name: newName,
             lessons: newLessons,
             stack: newStack

@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCourseById = exports.destroyCourse = exports.createCourse = exports.getAllCourses = void 0;
-const uuid_1 = require("uuid");
 const courses_1 = require("../dataTS/courses");
 const types_1 = require("../types/types");
+const getIdB_1 = require("../helpers/getIdB");
 exports.getAllCourses = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const q = req.query.q;
@@ -55,18 +55,9 @@ exports.createCourse = ((req, res) => __awaiter(void 0, void 0, void 0, function
         const newName = req.body.name;
         const newLessons = req.body.lessons || undefined;
         const newStack = req.body.stack || types_1.COURSE_STACK.BACK;
-        const getIdb = () => {
-            if (newId == undefined) {
-                const idB = (0, uuid_1.v4)();
-                return idB;
-            }
-            else {
-                const idB = newId;
-                return idB;
-            }
-        };
+        const id = (0, getIdB_1.createId)(newId);
         const newCourse = {
-            id: getIdb(),
+            id,
             name: newName,
             lessons: newLessons,
             stack: newStack
