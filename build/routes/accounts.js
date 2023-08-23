@@ -27,11 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const usersController = __importStar(require("./../controllers/usersController"));
+const accountsController = __importStar(require("./../controllers/accountsController"));
 const router = express_1.default.Router();
-router.get('/', usersController.getAllUsers);
-router.post('/', usersController.createUser);
-router.get('/:id', usersController.getUserById);
-router.delete("/:id", usersController.destroyUser);
+router.get('/', accountsController.getAllAcounts);
+router.post('/', accountsController.createAccount);
+router.get('/:id', accountsController.getAccountById);
+router.delete('/:id', accountsController.destroyAccount);
+router.put('/:id', accountsController.editAccount);
 exports.default = router;
-//# sourceMappingURL=users.js.map
+//# sourceMappingURL=accounts.js.map

@@ -1,4 +1,4 @@
-import { db } from "../models/knex"
+import { db } from "../models/knexDB"
 
 /* ------------  AULA TYPESCRIPT 1 --------------------------- */
 
@@ -146,6 +146,24 @@ export type TCourse = {
   stack: COURSE_STACK
 }
 /* ------------  FINAL AULA API-EXPRESS --------------------------- */
+
+/* ------------  INICIO AULA APROFUNDAMENTO-EXPRESS --------------------------- */
+
+export enum ACCOUNT_TYPE {
+  BRONZE = "Bronze",
+  SILVER = "Prata",
+  GOLD = "Ouro",
+  PLATINUM = "Platina",
+  BLACK = "Black"
+}
+
+export type TAccount = {
+  id: string,
+  ownerName: string,
+  balance: number,
+  type: ACCOUNT_TYPE
+}
+/* ------------  FINAL AULA APROFUNDAMENTO-EXPRESS --------------------------- */
 
 
 export type Task = {

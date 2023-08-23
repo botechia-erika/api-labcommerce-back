@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { db } from "../models/knex";
+import { db } from "../models/knexDB";
 import { TProductDB } from "../types/types";
+import {v4 as uuidv4} from 'uuid';
 
 
 export const editProductById = (async (req: Request, res: Response) => {
@@ -41,7 +42,7 @@ export const editProductById = (async (req: Request, res: Response) => {
                 product4edit.price = newPrice || product4edit.price
         }
                 await db("products").update(product4edit).where({id :`${newid}`})
-                res.status(201).send("produto atualizado com sucesso")
+                res.status(201).send({message: "produto atualizado com sucesso", result: product4edit})
             } catch (error) {
                 console.log(error)
         
@@ -61,12 +62,21 @@ export const editProductById = (async (req: Request, res: Response) => {
 export const createProduct = ( async (req: Request, res: Response) => {
 
     try {
-        const id = req.body.id
-        const name = req.body.name
+        const newId = req.body.newId as string | undefined
+        const name = req.body.name as string
         const description = req.body.description
-        const image_url = req.body.image_url
-        const price = req.body.price 
-        
+        const image_url = req.body.image_url as string
+        const price = req.body.price as number
+        const getIdb = () =>
+        {if(newId == undefined){
+          
+        const idB = uuidv4()
+            return idB
+        }else{
+        const idB = newId
+        return idB
+        }
+    }
     
         if (typeof name != typeof "string") {
             res.status(400).send({ message: 'nome do produto é invalido' })
@@ -83,7 +93,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
 
 
         const newAccount:TProductDB= {
-            id,
+            id:getIdb(),
             name,
             description,
             image_url,
@@ -107,7 +117,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
     }
 })
 
-// endpoints para purchases
+// endpoints para products
 
 export const getAllProducts=( async (req: Request, res: Response) => {
     try {
@@ -174,12 +184,12 @@ export const destroyProduct = ( async (req: Request, res: Response) => {
     try {
         const id = req.params.id
 
-        const [purchaseDelete] = await db("purchases").where({ id: id })
-        if (!purchaseDelete) {
-            throw new Error("purchase  nao encontrado")
+        const [productDelete] = await db("products").where({ id: id })
+        if (!productDelete) {
+            throw new Error("product  nao encontrado")
         }
-        await db("purchases").delete().where({ id: `${id}`})
-        res.status(200).send({ message: 'purchase deletado com sucesso' })
+        await db("products").delete().where({ id: `${id}`})
+        res.status(200).send({ message: 'product deletado com sucesso' })
     }
     catch (error) {
         console.log(error)

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CURRENTSTATUS = exports.COURSE_STACK = exports.arrayPersonRole = exports.ACCOUNT = exports.ROLE = void 0;
+exports.CURRENTSTATUS = exports.ACCOUNT_TYPE = exports.COURSE_STACK = exports.arrayPersonRole = exports.ACCOUNT = exports.ROLE = void 0;
 var ROLE;
 (function (ROLE) {
     ROLE["ADMIN"] = "Admin";
@@ -80,6 +80,14 @@ var COURSE_STACK;
     COURSE_STACK["FRONT"] = "Front-end";
     COURSE_STACK["BACK"] = "Back-end";
 })(COURSE_STACK || (exports.COURSE_STACK = COURSE_STACK = {}));
+var ACCOUNT_TYPE;
+(function (ACCOUNT_TYPE) {
+    ACCOUNT_TYPE["BRONZE"] = "Bronze";
+    ACCOUNT_TYPE["SILVER"] = "Prata";
+    ACCOUNT_TYPE["GOLD"] = "Ouro";
+    ACCOUNT_TYPE["PLATINUM"] = "Platina";
+    ACCOUNT_TYPE["BLACK"] = "Black";
+})(ACCOUNT_TYPE || (exports.ACCOUNT_TYPE = ACCOUNT_TYPE = {}));
 var CURRENTSTATUS;
 (function (CURRENTSTATUS) {
     CURRENTSTATUS[CURRENTSTATUS["NAOINICIADA"] = 0] = "NAOINICIADA";

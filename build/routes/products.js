@@ -33,6 +33,6 @@ router.get('/', productsController.getAllProducts);
 router.post('/', productsController.createProduct);
 router.put('/:id', productsController.editProductById);
 router.get('/:id', productsController.getProductById);
-router.delete("/purchases/:id", productsController.destroyProduct);
+router.delete("/:id", productsController.destroyProduct);
 exports.default = router;
 //# sourceMappingURL=products.js.map
