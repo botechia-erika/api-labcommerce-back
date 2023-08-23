@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const port = process.env.PORT || 3003;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const knexDB_1 = require("./models/knexDB");
@@ -22,9 +23,8 @@ const accounts_1 = __importDefault(require("./routes/accounts"));
 const users_1 = __importDefault(require("./routes/users"));
 console.log(types_1.arrayPersonRole);
 const app = (0, express_1.default)();
-const PORT = 3036;
-const port = process.env.PORT;
 app.use((0, cors_1.default)());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
 app.get("/ping", (req, res) => {
     res.send("Pong");
@@ -60,14 +60,13 @@ app.get("/purchase/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const id = req.params.id;
         const result = yield knexDB_1.db.raw(`
-      FROM
-    PURCHASES
-    INNER JOIN PRODUCTS_PURCHASES
-    ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
-    INNER JOIN PRODUCTS
-    ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
-WHERE
-    PURCHASE_ID="PG001"`);
+        FROM PURCHASES
+        INNER JOIN PRODUCTS_PURCHASES
+        ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
+        INNER JOIN PRODUCTS
+        ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
+        WHERE
+        PURCHASE_ID=${id}`);
         res.status(200).json({ result, message: `RESULTADO PARA PAGAMENTO IDENTIFICADO ${id}` });
     }
     catch (error) {
@@ -145,7 +144,7 @@ app.delete("/purchases/:id", (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
     }
 }));
-app.listen(3003, () => {
+app.listen(port, () => {
     console.log(`Servidor rodando na porta 3003 `);
 });
 //# sourceMappingURL=index.js.map

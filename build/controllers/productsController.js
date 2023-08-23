@@ -9,9 +9,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroyProduct = exports.getProductById = exports.getAllProducts = exports.createProduct = exports.editProductById = void 0;
+exports.destroyProduct = exports.getProductById = exports.createProduct = exports.editProductById = exports.getAllProducts = void 0;
 const knexDB_1 = require("../models/knexDB");
 const getIdB_1 = require("../helpers/getIdB");
+exports.getAllProducts = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const searchTerm = req.query.q;
+        if (searchTerm === undefined) {
+            const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA";
+            const result = yield (0, knexDB_1.db)("products");
+            res.status(200).send({ result });
+        }
+        else {
+            const [result] = yield (0, knexDB_1.db)("products").where("name", "LIKE", `%${searchTerm}%`);
+            if (!result) {
+                res.status(404);
+                throw new Error("404: NOME do Produto NÃO Encontrado");
+            }
+            res.status(200).send({ result: [result], message: "PRODUTO ENCONTRADO" });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        if (req.statusCode === 200) {
+            res.status(500);
+        }
+        if (error instanceof Error) {
+            res.send(error.message);
+        }
+        else {
+            res.send("Erro inesperado");
+        }
+    }
+}));
 exports.editProductById = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newid = req.params.id;
@@ -90,37 +120,6 @@ exports.createProduct = ((req, res) => __awaiter(void 0, void 0, void 0, functio
         };
         yield (0, knexDB_1.db)("products").insert(newAccount);
         res.status(201).send("produto cadastrado com sucesso");
-    }
-    catch (error) {
-        console.log(error);
-        if (req.statusCode === 200) {
-            res.status(500);
-        }
-        if (error instanceof Error) {
-            res.send(error.message);
-        }
-        else {
-            res.send("Erro inesperado");
-        }
-    }
-}));
-exports.getAllProducts = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const searchTerm = req.query.q;
-        if (searchTerm === undefined) {
-            const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA";
-            const result = yield (0, knexDB_1.db)("products");
-            res.status(200).send({ result });
-        }
-        else {
-            const [result] = yield (0, knexDB_1.db)("products").where("name", "LIKE", `%${searchTerm}%`);
-            if (![result] || result == null) {
-                res.send({ message: "PRODUTO NÃO ENCONTRADO" });
-            }
-            else {
-                res.status(200).send({ result: [result], message: "PRODUTO ENCONTRADO" });
-            }
-        }
     }
     catch (error) {
         console.log(error);

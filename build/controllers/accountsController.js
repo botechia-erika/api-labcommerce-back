@@ -51,20 +51,12 @@ exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getAccountById = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        function buscaAccountPorId(accounts, id) {
-            return accounts.filter((account) => {
-                if (account.id === (id)) {
-                    return account;
-                }
-            });
+        const result = accounts_1.accounts.find((account) => account.id === id);
+        if (!result) {
+            res.status(404);
+            throw new Error("404: conta NÃO encontrada, verifique o Id");
         }
-        const [result] = buscaAccountPorId(accounts_1.accounts, id);
-        if (result) {
-            res.status(200).json({ message: "conta encontrado no nosso sistema", result });
-        }
-        else {
-            res.status(200).json({ result: null, message: "conta NÃO cadastrada" });
-        }
+        res.status(200).json({ message: "conta encontrado no nosso sistema", result });
     }
     catch (error) {
         console.log(error);
@@ -82,9 +74,9 @@ exports.getAccountById = ((req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.destroyAccount = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const idToDelete = req.params.id;
-        const getIndex = accounts_1.accounts.findIndex((account) => account.id === idToDelete);
-        if (getIndex != null) {
-            accounts_1.accounts.splice(getIndex);
+        const result = accounts_1.accounts.findIndex((account) => account.id === idToDelete);
+        if (result != null) {
+            accounts_1.accounts.splice(result);
             res.status(200).send("account deletado com sucesso");
         }
     }
@@ -137,16 +129,15 @@ exports.editAccount = ((req, res) => __awaiter(void 0, void 0, void 0, function*
         const balance4Edit = req.body.balance;
         const type4Edit = req.body.type;
         const account4edit = accounts_1.accounts.find((account) => account.id === id);
-        if (account4edit) {
-            account4edit.id = id;
-            account4edit.ownerName = owner4Edit || account4edit.ownerName;
-            account4edit.balance = balance4Edit || account4edit.balance;
-            account4edit.type = type4Edit || account4edit.type;
-            res.status(200).json({ message: 'account atualizado com sucesso', account4edit });
+        if (!account4edit) {
+            res.status(404);
+            throw new Error('404: account NÃO ENCONTRADA, VERIFICAR ID correto para Atualização');
         }
-        else {
-            res.status(200).json({ message: 'account NÃO ATUALIZADO, reveja os dados', account4edit });
-        }
+        account4edit.id = id;
+        account4edit.ownerName = owner4Edit || account4edit.ownerName;
+        account4edit.balance = balance4Edit || account4edit.balance;
+        account4edit.type = type4Edit || account4edit.type;
+        res.status(200).json({ message: 'account atualizado com sucesso', account4edit });
     }
     catch (error) {
         console.log(error);

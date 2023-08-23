@@ -4,6 +4,44 @@ import { TProductDB } from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import { createId } from "../helpers/getIdB";
 
+export const getAllProducts=( async (req: Request, res: Response) => {
+    try {
+       const searchTerm = req.query.q as string | undefined
+        if(searchTerm === undefined){
+        const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
+        const result = await db("products")
+        res.status(200).send({ result})
+    }else{
+    
+       const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
+
+
+
+        if(!result){
+            res.status(404)
+            throw new Error("404: NOME do Produto NÃO Encontrado")     
+        }
+
+        
+        res.status(200).send({result : [result], message: "PRODUTO ENCONTRADO"})
+    }
+}
+    catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+});
+
+
 export const editProductById = (async (req: Request, res: Response) => {
     try {
         const newid = req.params.id;
@@ -111,38 +149,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
     }
 })
 
-// endpoints para products
 
-export const getAllProducts=( async (req: Request, res: Response) => {
-    try {
-       const searchTerm = req.query.q as string | undefined
-        if(searchTerm === undefined){
-        const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
-        const result = await db("products")
-        res.status(200).send({ result})
-    }else{
-    
-       const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
-        if(![result]|| result == null){
-            res.send({message: "PRODUTO NÃO ENCONTRADO"})     
-        }else{
-        res.status(200).send({result : [result], message: "PRODUTO ENCONTRADO"})
-    }
-}}
-    catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-});
 export const getProductById =( async (req: Request, res: Response) => {
     const id = req.params.id as string | []
 

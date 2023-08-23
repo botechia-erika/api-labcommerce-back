@@ -1,0 +1,20 @@
+[
+    {
+        "id": "a001",
+        "ownerName": "Ciclano",
+        "balance": 10000,
+        "type": "Gold"
+    },
+    {
+        "id": "a002",
+        "ownerName": "Astrodev",
+        "balance": 500000,
+        "type": "Black"
+    },
+    {
+        "id": "a003",
+        "ownerName": "Fulana",
+        "balance": 20000,
+        "type": "Platinum"
+    }
+]

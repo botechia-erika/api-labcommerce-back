@@ -1,13 +1,14 @@
-import express from 'express'
+
+const port = process.env.PORT || 3003
+
+import express from 'express';
 import { Request, Response } from 'express';
 import cors from 'cors';
-import path from 'path';
+
 import { db } from './models/knexDB'
-import { configDotenv } from 'dotenv';
-import { ACCOUNT, COURSE_STACK, ROLE, TAccount, TCourse, TProductDB , arrayPersonRole} from './types/types';
-import { courses } from './dataTS/courses';
-import { accounts } from './dataTS/accounts';
-import {v4 as uuidv4} from 'uuid';
+
+import { arrayPersonRole} from './types/types';
+
 import productsRouter from './routes/products'
 import coursesRouter from './routes/courses'
 import  accountsRouter from './routes/accounts';
@@ -16,9 +17,11 @@ import usersRouter from './routes/users'
 console.log(arrayPersonRole)
 const app = express()
 
-const PORT = 3036
-const port = process.env.PORT
+
+
+
 app.use(cors())
+app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 //app.use(express.static(path.resolve(__dirname, "./../public/")))
 app.get("/ping", (req: Request, res: Response) => {
@@ -66,14 +69,13 @@ app.get("/purchase/:id", async (req: Request, res: Response) => {
     try {
         const id = req.params.id 
         const result= await db.raw(`
-      FROM
-    PURCHASES
-    INNER JOIN PRODUCTS_PURCHASES
-    ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
-    INNER JOIN PRODUCTS
-    ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
-WHERE
-    PURCHASE_ID="PG001"`
+        FROM PURCHASES
+        INNER JOIN PRODUCTS_PURCHASES
+        ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
+        INNER JOIN PRODUCTS
+        ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
+        WHERE
+        PURCHASE_ID=${id}`
         )
          res.status(200).json({ result, message: `RESULTADO PARA PAGAMENTO IDENTIFICADO ${id}`});
     
@@ -167,7 +169,9 @@ app.post("/purchases", async (req: Request, res: Response) => {
             }
         }
     })
+
+
     
-app.listen(3003, () => {
+app.listen(port, () => {
     console.log(`Servidor rodando na porta 3003 `)
 });

@@ -3,10 +3,13 @@ import {v4 as uuidv4} from 'uuid';
 import { accounts } from "../dataTS/accounts";
 import { ACCOUNT_TYPE, TAccount } from "../types/types";
 import { createId } from "../helpers/getIdB";
+import fs from 'fs'
+import path from 'path'
+//const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.s')
+//const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8'))
+
 
 export const getAllAcounts = ( async (req: Request, res: Response) => {
-
-
     try {
         const q = req.query.q as string | undefined      
         if (q === undefined) {
@@ -55,31 +58,18 @@ export const getAccountById = (async (req: Request, res: Response) => {
     try{
 
         const id = req.params.id as string
-    function buscaAccountPorId(accounts:TAccount[], id:string){
-        return accounts.filter(
-            (account)=>{
-                if( account.id === (id)){
-                    return account
-                }
-            }
-        )
+   
+    const result = accounts.find((account)=>account.id === id)
+    if(!result){
+        res.status(404)
+        throw new Error( "404: conta NÃO encontrada, verifique o Id")  
     }
-    const [result] = buscaAccountPorId(accounts, id)
-    if(result){
-        res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
-
-     
-    }else{
-        res.status(200).json({result: null, message: "conta NÃO cadastrada"})  
- 
-    }
+    res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
 }catch (error) {
     console.log(error)
-
     if (req.statusCode === 200) {
         res.status(500)
     }
-
     if (error instanceof Error) {
         res.send(error.message)
     } else {
@@ -94,12 +84,12 @@ try{
     const idToDelete = req.params.id
 
     // encontrar o index do item que será removido
-const getIndex = accounts.findIndex((account) => account.id === idToDelete)
+const result = accounts.findIndex((account) => account.id === idToDelete)
 
     // caso o item exista, o index será maior ou igual a 0
-if (getIndex != null) {
+if (result != null) {
             // remoção do item através de sua posição
-    accounts.splice(getIndex)
+    accounts.splice(result)
 
 
 res.status(200).send("account deletado com sucesso")
@@ -131,6 +121,7 @@ export const createAccount =( async (req: Request, res: Response) => {
 
         
       const id = createId(newId)
+      
 
         const newAccount:TAccount = {
             id,
@@ -170,15 +161,17 @@ export const editAccount =( async (req: Request, res: Response) => {
         
         const account4edit = accounts.find((account)=> account.id === id)
 
-        if(account4edit){
+        if(!account4edit){
+            res.status(404)
+            throw new Error ( '404: account NÃO ENCONTRADA, VERIFICAR ID correto para Atualização')
+        }
+    
             account4edit.id = id
             account4edit.ownerName = owner4Edit || account4edit.ownerName   
             account4edit.balance = balance4Edit || account4edit.balance 
             account4edit.type = type4Edit || account4edit.type     
             res.status(200).json({ message: 'account atualizado com sucesso', account4edit})
-        }else{        
-        res.status(200).json({ message: 'account NÃO ATUALIZADO, reveja os dados', account4edit})
-        }
+     
 
     } catch (error) {
         console.log(error)
