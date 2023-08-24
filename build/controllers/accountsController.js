@@ -27,12 +27,11 @@ exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, functio
                 });
             }
             const [result] = buscaAccountOwner(accounts_1.accounts, q);
-            if (result) {
-                res.status(200).json({ message: "owner tem conta no nosso sistema", result });
+            if (!result) {
+                res.status(404);
+                throw new Error("404 owner NÃO encontrado, insira um nome cadastrado");
             }
-            else {
-                res.status(200).json({ result: null, message: "owner NÃO encontrado" });
-            }
+            res.status(200).json({ message: "owner tem conta no nosso sistema", result });
         }
     }
     catch (error) {
@@ -75,10 +74,14 @@ exports.destroyAccount = ((req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const idToDelete = req.params.id;
         const result = accounts_1.accounts.findIndex((account) => account.id === idToDelete);
-        if (result != null) {
-            accounts_1.accounts.splice(result);
-            res.status(200).send("account deletado com sucesso");
+        if (result === -1) {
+            res.status(404);
+            throw new Error("404: conta NÃO encontrada, verifique o Id");
         }
+        if (result >= 0) {
+            accounts_1.accounts.splice(result, 1);
+        }
+        res.status(200).send("account deletado com sucesso");
     }
     catch (error) {
         console.log(error);

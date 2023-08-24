@@ -78,13 +78,19 @@ export const createUser = ( async (req: Request, res: Response) => {
 
     try {
         const newId = req.body.id as string | undefined
-        const name = req.body.name
-        const nickname = req.body.nickname
+        const name = req.body.name as string | undefined
+        const nickname = req.body.nickname as string
         const email = req.body.email
         const password = req.body.password
 
         
-        const id = createId(newId)
+        const selectId = createId(newId)
+     
+        const userExists = await db.raw(`SELECT id FROM users WHERE id="${selectId}"`)
+        if(userExists === selectId){
+            res.status(400)
+            throw new Error("id já esta em uso")
+        }
 
         if (typeof name !== "string") {
             res.status(400).send({ message: 'nome invalido' })
@@ -95,13 +101,21 @@ export const createUser = ( async (req: Request, res: Response) => {
         if (typeof email !== "string") {
             res.status(400).send('email invalido')
         }
+  
         if (typeof password !== "string") {
-            res.status(400).send("outra senha essa é invalida tente alfa-numerico")
-        }
+			throw new Error("'password ' deve ser uma string")
+		}
+	
+		// o método de string .match() verifica se existe o padrão,
+		// caso exista ele retorna um array com os valores encontrados
+		// caso não exista ele retorna null (por isso o !)
+		if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
+			throw new Error("'password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial")
+		}
 
 
         const newAuthor: {id:string, name: string, nickname: string, email: string, password: string } = {
-            id,
+            id: selectId,
             name,
             nickname,
             email,
@@ -123,6 +137,80 @@ export const createUser = ( async (req: Request, res: Response) => {
         }
     }
 })
+
+export const editUserById = (async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id
+        const newName = req.body.name as string | undefined
+        const newNickname = req.body.nickname as string | undefined
+        const newEmail  = req.body.email as string | undefined
+        const newPassword = req.body.password as string | undefined
+
+        if (newName) {
+            if (typeof newName !== "string") {
+                res.status(400);
+                throw new Error("Nome do produto deve ser do tipo string");
+            }
+        }
+
+        if (newNickname) {
+            if (typeof newNickname !== "string") {
+                res.status(400);
+                throw new Error("Descrição deve ser do tipo string");
+            }
+        }
+
+        if (newEmail) {
+            if (typeof newEmail !== "string") {
+                res.status(400);
+                throw new Error("Novo email deve ser de tipo string");
+            }
+        }
+
+        if(newPassword){
+        if (typeof newPassword == "string") {
+			throw new Error("'new password ' deve ser uma string")
+		}
+        }
+        if(newPassword){
+		// o método de string .match() verifica se existe o padrão,
+		// caso exista ele retorna um array com os valores encontrados
+		// caso não exista ele retorna null (por isso o !)
+		if (!newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
+			throw new Error("'new password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial")
+		}
+
+    }
+        const [user4edit] = await db.raw(`SELECT * FROM users WHERE users.id=${id}`);
+        if ([user4edit]) {
+            user4edit.id = id,
+            user4edit.name = newName || user4edit.name,
+            user4edit.nickname = newNickname || user4edit.nickname,
+            user4edit.email = newEmail || user4edit.email,
+            user4edit.password= newPassword || user4edit.password,
+        
+    
+                await db("users").update(user4edit).where({id :`${id}`})
+
+                res.status(201).send({message: "user atualizado com sucesso", result: user4edit})
+        }
+            } catch (error) {
+                console.log(error)
+        
+                if (req.statusCode === 200) {
+                    res.status(500)
+                }
+        
+                if (error instanceof Error) {
+                    res.send(error.message)
+                } else {
+                    res.send("Erro inesperado")
+                }
+            }
+});
+
+
+
 export const destroyUser = ( async (req: Request, res: Response) => {
 
     try {

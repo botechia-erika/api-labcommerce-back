@@ -3,8 +3,8 @@ import {v4 as uuidv4} from 'uuid';
 import { accounts } from "../dataTS/accounts";
 import { ACCOUNT_TYPE, TAccount } from "../types/types";
 import { createId } from "../helpers/getIdB";
-import fs from 'fs'
-import path from 'path'
+//import fs from 'fs'
+//import path from 'path'
 //const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.s')
 //const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8'))
 
@@ -13,12 +13,8 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
     try {
         const q = req.query.q as string | undefined      
         if (q === undefined) {
-           
-            
             res.status(200).json( accounts )
         }else {
-          
-
            function buscaAccountOwner(accounts:TAccount[], q:string){
                 return accounts.filter(
                     (account)=>{
@@ -29,14 +25,11 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
                 )
             }
             const [result] = buscaAccountOwner(accounts, q)
-            if(result){
+            if(!result){
+                res.status(404)
+                throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
+            }
                 res.status(200).json({ message: "owner tem conta no nosso sistema" , result})
-
-             
-            }else{
-                res.status(200).json({result: null, message: "owner NÃO encontrado"})  
-             
-        }
     }
     } catch (error) {
         console.log(error)
@@ -52,7 +45,6 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
         }
     }
 })
-
 
 export const getAccountById = (async (req: Request, res: Response) => {
     try{
@@ -85,15 +77,18 @@ try{
 
     // encontrar o index do item que será removido
 const result = accounts.findIndex((account) => account.id === idToDelete)
-
+if(result===-1){
+    res.status(404)
+    throw new Error( "404: conta NÃO encontrada, verifique o Id")  
+}
     // caso o item exista, o index será maior ou igual a 0
-if (result != null) {
+if (result>=0) {
             // remoção do item através de sua posição
-    accounts.splice(result)
-
+    accounts.splice(result, 1)
+}
 
 res.status(200).send("account deletado com sucesso")
-}
+
 }catch (error) {
     console.log(error)
 

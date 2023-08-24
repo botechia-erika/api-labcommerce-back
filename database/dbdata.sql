@@ -1,4 +1,4 @@
--- Active: 1692653245701@@127.0.0.1@3306
+-- Active: 1692848051439@@127.0.0.1@3306
 
 
 
@@ -40,6 +40,7 @@ INSERT INTO USERS(
     "botechiaeri@gmail.com",
     "Conway22124748"
 );
+
 
 SELECT
     *
@@ -207,3 +208,25 @@ SELECT * FROM purchases WHERE id = PG001
 JOIN products 
 WHERE products.id=product_id;
 
+CREATE TABLE books(
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    author TEXT NOT NULL,
+    page_count INTEGER,
+    price REAL NOT NULL
+);
+
+DROP TABLE books;
+SELECT * FROM books;
+
+CREATE TABLE accounts (
+    id TEXT PRIMARY KEY NOT NULL UNIQUE,
+    owner_id TEXT NOT NULL,
+    balance REAL DEFAULT (0) NOT NULL,
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES purchases(buyer_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE accounts;
+
+SELECT * FROM accounts;

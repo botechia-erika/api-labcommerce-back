@@ -23,7 +23,8 @@ export type TPerson = {
 
 export enum ROLE {
     ADMIN = "Admin",
-    NORMAL = "Normal"
+    NORMAL = "Normal",
+    BUYER = "Buyer"
 }
 
 const usuario :TPerson={
@@ -165,6 +166,41 @@ export type TAccount = {
 }
 /* ------------  FINAL AULA APROFUNDAMENTO-EXPRESS --------------------------- */
 
+/* ------------  INICIO AULA POO1 --------------------------- */
+
+export type TUserDB = {
+  id: string,
+  name: string,
+  email: string,
+  password: string,
+  created_at: string
+}
+
+// tipagem para criação (POST) sem created_at
+export type TUserDBPost = {
+  id: string,
+  name: string,
+  email: string,
+  password: string
+}
+
+export type TAccountDB = {
+  id: string,
+  balance: number,
+  owner_id: string,
+  created_at: string
+}
+
+// tipagem para criação (POST) sem balance e created_at
+export type TAccountDBPost = {
+  id: string,
+  owner_id: string
+}
+
+
+
+/* ------------  FINAL AULA POO1 --------------------------- */
+
 
 export type Task = {
     id: string,
@@ -196,9 +232,17 @@ export type TProjects = {
 export type TProductDB ={
    id: string,
    name:string,
-   description: "FREE"| 'FULL-PREMIUM'|'PREMIUM-MENSAL',
+   description: DESCRIPTION_CATEGORY,
    image_url: string,
-   price : Number  | string
+   price : number
+}
+
+export type TNewProduct = {
+  id: string,
+  name: string,
+  description: string | undefined,
+  image_url: string | undefined,
+  price : number | undefined
 }
 const Title = {
     name: "CONWAY",
@@ -225,13 +269,13 @@ export type TItemPurchased = {
     quantity: number,
 }
 
-
+/*
 export type TProductsDB = {
     product_id:string,
     quantity:number,
     priceUnity:number,
     totalItem:number
-}
+}*/
 
 /*const purchaseDBNumber = () => {
     return new Promise(async (resolve, reject) => {
@@ -248,5 +292,12 @@ export type TProductsDB = {
 
   // await dbFunciona("users").where({ id: `${buyerId}` });
 
+/* -------------------------PROJETO PER SE ------------------------------ */
 
-
+export enum DESCRIPTION_CATEGORY {
+  LIGHT="Light",
+  HATCH="Hatch",
+  SEDAN="Sedan",
+  PRIME="Prime",
+  LUX="Lux"
+}
