@@ -3,8 +3,8 @@ import {v4 as uuidv4} from 'uuid';
 import { accounts } from "../dataTS/accounts";
 import { ACCOUNT_TYPE, TAccount } from "../types/types";
 import { createId } from "../helpers/getIdB";
-import fs from 'fs'
-import path from 'path'
+//import fs from 'fs'
+//import path from 'path'
 //const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.s')
 //const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8'))
 
@@ -13,12 +13,8 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
     try {
         const q = req.query.q as string | undefined      
         if (q === undefined) {
-           
-            
             res.status(200).json( accounts )
         }else {
-          
-
            function buscaAccountOwner(accounts:TAccount[], q:string){
                 return accounts.filter(
                     (account)=>{
@@ -29,14 +25,11 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
                 )
             }
             const [result] = buscaAccountOwner(accounts, q)
-            if(result){
+            if(!result){
+                res.status(404)
+                throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
+            }
                 res.status(200).json({ message: "owner tem conta no nosso sistema" , result})
-
-             
-            }else{
-                res.status(200).json({result: null, message: "owner NÃO encontrado"})  
-             
-        }
     }
     } catch (error) {
         console.log(error)
@@ -53,21 +46,25 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
     }
 })
 
-
 export const getAccountById = (async (req: Request, res: Response) => {
     try{
 
-        const id = req.params.id as string
+    const id = req.params.id as string
    
+    if(id[0] !== "a"){
+        res.status(400)
+        throw new Error("'id' deve começar com letra 'a'")
+    }
+
     const result = accounts.find((account)=>account.id === id)
     if(!result){
         res.status(404)
         throw new Error( "404: conta NÃO encontrada, verifique o Id")  
     }
-    res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
-}catch (error) {
-    console.log(error)
-    if (req.statusCode === 200) {
+        res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
+    }catch (error) {
+        console.log(error)
+        if (req.statusCode === 200) {
         res.status(500)
     }
     if (error instanceof Error) {
@@ -79,34 +76,46 @@ export const getAccountById = (async (req: Request, res: Response) => {
 })
 
 export const destroyAccount = (async (req: Request, res: Response) => {
-    // identificação do que será deletado via path params
+ 
 try{
     const idToDelete = req.params.id
 
+    // importante regra de negocio economiza consulta a banco de dado
+    
+    if(idToDelete[0] !== "a"){
+        res.status(400)
+        throw new Error("'id' deve começar com letra 'a'")
+    }
+
     // encontrar o index do item que será removido
-const result = accounts.findIndex((account) => account.id === idToDelete)
-
+    
+    const result = accounts.findIndex((account) => account.id === idToDelete)
+    if(result===-1){
+        res.status(404)
+        throw new Error( "404: conta NÃO encontrada, verifique o Id")  
+    }
     // caso o item exista, o index será maior ou igual a 0
-if (result != null) {
-            // remoção do item através de sua posição
-    accounts.splice(result)
-
-
-res.status(200).send("account deletado com sucesso")
-}
-}catch (error) {
-    console.log(error)
-
-    if (req.statusCode === 200) {
-        res.status(500)
+    
+    if (result>=0) {
+    // remoção do item através de sua posição
+    accounts.splice(result, 1)
     }
 
-    if (error instanceof Error) {
-        res.send(error.message)
-    } else {
-        res.send("Erro inesperado")
-    }
-}
+    res.status(200).send("account deletado com sucesso")
+
+    }catch (error) {
+         console.log(error)
+         
+         if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }   
 })
 
 export const createAccount =( async (req: Request, res: Response) => {
@@ -120,11 +129,23 @@ export const createAccount =( async (req: Request, res: Response) => {
         const newType = req.body.type as   ACCOUNT_TYPE.BLACK|ACCOUNT_TYPE.BRONZE | ACCOUNT_TYPE.GOLD | ACCOUNT_TYPE.PLATINUM|ACCOUNT_TYPE.SILVER
 
         
-      const id = createId(newId)
+      const idAccount =  accounts.length
+
+      const defineIdAccount = (idAccount:number)=>{
+      if(idAccount < 10){
+        const id = "a00" + idAccount
+        return id
+      }else if(idAccount<100){
+        const id = "a0" + idAccount
+        return id
+      }else if(idAccount>100){
+        const id = "a" + idAccount
+      }
+    }
       
 
         const newAccount:TAccount = {
-            id,
+            id:defineIdAccount(idAccount),
             ownerName: newOwner,
             balance: newBalance,
             type: newType

@@ -1,8 +1,74 @@
 import { Request, Response } from "express";
 import { db } from "../models/knexDB";
-import { TProductDB } from "../types/types";
+import { DESCRIPTION_CATEGORY, TProductDB } from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import { createId } from "../helpers/getIdB";
+import { matchDescriptionCategory } from "../helpers/matchDescriptionCategory";
+
+export const createProduct = ( async (req: Request, res: Response) => {
+
+    try {
+        const newPlaca = req.body.placa as string 
+        const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano as string
+        const newDescription = req.body.description as string | undefined  
+        const newImage = req.body.image_url as string | undefined
+        const newPrice = req.body.price as number
+      
+     
+    
+        if (typeof newName != typeof "string" ) {
+            res.status(400)
+            throw new Error ('400 nome do deve seguir o formato "MODELO MARCA ANO" ')
+        }
+
+        if(typeof newPlaca !== typeof "string"){
+            res.status(400)
+            throw new Error ("400: placa deve ser alfa numerica")
+        }
+
+        if (!newPlaca.match(/[A-Z]{3}[-][0-9]{4}/g)) {
+                res.status(400)
+                throw new Error ("400: placa deve seguir o padrão AAA-0000")
+        }
+
+        if (!newImage.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)){
+            res.status(400)
+            throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
+        }
+
+     /*    const  idDBExists  = await db.raw(`SELECT * FROM products WHERE id="${newPlaca}"`)
+
+        if (idDBExists && idDBExists !== undefined) {
+            res.status(400)
+            throw new Error("'placa' já cadastrada")
+        } */
+
+
+        const newAccount:TProductDB= {
+            id:newPlaca,
+            name:newName,
+            description:matchDescriptionCategory(newPrice),
+            image_url:newImage,
+            price:newPrice
+        }
+            await db("products").insert(newAccount)
+    
+        res.status(201).send("produto cadastrado com sucesso")
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+
 
 export const getAllProducts=( async (req: Request, res: Response) => {
     try {
@@ -12,17 +78,20 @@ export const getAllProducts=( async (req: Request, res: Response) => {
         const result = await db("products")
         res.status(200).send({ result})
     }else{
-    
+        const searchTerm = req.query.q as string | undefined
+
+
+        if(searchTerm && searchTerm.length < 0 ||searchTerm === "" ){
+            res.status(400)
+            throw new Error('Pesquisa deve ter ao menos 1 caracter')
+        }
+
+
        const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
-
-
-
         if(!result){
             res.status(404)
             throw new Error("404: NOME do Produto NÃO Encontrado")     
         }
-
-        
         res.status(200).send({result : [result], message: "PRODUTO ENCONTRADO"})
     }
 }
@@ -44,43 +113,51 @@ export const getAllProducts=( async (req: Request, res: Response) => {
 
 export const editProductById = (async (req: Request, res: Response) => {
     try {
-        const newid = req.params.id;
-        const newName = req.body.name as string | undefined;
-        const newDescription = req.body.description as string | undefined;
-        const newImageUrl = req.body.image_url as string | undefined;
-        const newPrice = req.body.price as string | number | undefined;
+        const idSelect = req.params.id;
+        const nameSelect = req.body.name as undefined  | string
+        const newImg = req.body.image_url as string | undefined;
+        const newPrice = req.body.price as   number | undefined;
 
-        if (newName !== undefined) {
-            if (typeof newName !== "string") {
+        /*const [productExists] = await db.raw(`SELECT id FROM products WHERE id="idSelect"`)
+        if(!productExists){
+            res.status(404);
+            throw new Error("404: Produto não cadastrado");
+        }*/
+
+
+        if (nameSelect !== undefined) {
+            const confereNome = await db.raw(`SELECT name FROM products WHERE id="idSelect"`)
+            if (nameSelect && confereNome !== nameSelect) {
                 res.status(400);
-                throw new Error("Nome do produto deve ser do tipo string");
+                throw new Error("Nome do produto cadastrado não deve ser alterado");
             }
         }
 
-        if (newDescription !== undefined) {
-            if (typeof newDescription !== "string") {
-                res.status(400);
-                throw new Error("Descrição deve ser do tipo string");
+
+        if (newImg !== undefined) {
+            if (!newImg.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)){
+            res.status(400)
+            throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
             }
         }
 
-        if (newImageUrl !== undefined) {
-            if (typeof newImageUrl !== "string") {
-                res.status(400);
-                throw new Error("Nova imagem deve ser do tipo string");
+        if(newPrice){
+            if(newPrice && typeof newPrice !== typeof Number){
+                res.status(400)
+                throw new Error("400: Preço atualizado deve ser valor numerico valido")
             }
         }
 
-        const [product4edit] = await db.raw(`SELECT * FROM products WHERE products.id="${newid}"`);
-        if ([product4edit]) {
-            product4edit.id = newid,
-                product4edit.name = newName || product4edit.name,
-                product4edit.description = newDescription || product4edit.description,
-            product4edit.image_url= newImageUrl || product4edit.image_url,
+        const [product4edit] = await db.raw(`SELECT * FROM products WHERE id="${idSelect}"`);
+        if (product4edit) {
+                product4edit.id = idSelect,
+                product4edit.name = nameSelect||product4edit.name,
+                product4edit.description = matchDescriptionCategory(newPrice),
+                product4edit.image_url= newImg|| product4edit.image_url,
                 product4edit.price = newPrice || product4edit.price
         }
-                await db("products").update(product4edit).where({id :`${newid}`})
-                res.status(201).send({message: "produto atualizado com sucesso", result: product4edit})
+                await db("products").update(product4edit).where({id :`${idSelect}`})
+                res.status(200).send({message: "produto atualizado com sucesso", result: product4edit})
             } catch (error) {
                 console.log(error)
         
@@ -96,68 +173,15 @@ export const editProductById = (async (req: Request, res: Response) => {
             }
 });
 
-
-export const createProduct = ( async (req: Request, res: Response) => {
-
-    try {
-        const newId = req.body.newId as string | undefined
-        const name = req.body.name as string
-        const description = req.body.description
-        const image_url = req.body.image_url as string
-        const price = req.body.price as number
-      
-     
-    
-        if (typeof name != typeof "string") {
-            res.status(400).send({ message: 'nome do produto é invalido' })
-        }
-        if (typeof description != typeof "string") {
-            res.status(400).send('description deve ser categoria de produto valida')
-        }
-        if (typeof image_url != typeof "string") {
-            res.status(400).send('url da imagem deve ser valida')
-        }
-        if (typeof price == undefined) {
-            res.status(400).send("price deve ser numerico")
-        }
-
-        const id = createId(newId)
-
-
-        const newAccount:TProductDB= {
-            id,
-            name,
-            description,
-            image_url,
-            price
-        }
-            await db("products").insert(newAccount)
-    
-        res.status(201).send("produto cadastrado com sucesso")
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-})
-
-
 export const getProductById =( async (req: Request, res: Response) => {
     const id = req.params.id as string | []
 
     try {
-        const [result] = await db.raw(`SELECT * FROM products WHERE id="${id}"`)
+        const result = await db.raw(`SELECT * FROM products WHERE id=${id}`)
 
         if (!result) {
-            res.status(200).send({message: "PRODUTO  não encontrado"})
+            res.status(404)
+            throw new Error( "PRODUTO  não Cadastrado , verifique o 'id'")
         }
         else {
 
@@ -185,7 +209,7 @@ export const destroyProduct = ( async (req: Request, res: Response) => {
     try {
         const id = req.params.id
 
-        const [productDelete] = await db("products").where({ id: id })
+        const productDelete = await db("products").where({ id: id })
         if (!productDelete) {
             throw new Error("product  nao encontrado")
         }
