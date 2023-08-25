@@ -57,10 +57,13 @@ export const getAccountById = (async (req: Request, res: Response) => {
     }
 
     const result = accounts.find((account)=>account.id === id)
+
     if(!result){
+        // res.statusCode = 404 tbm funciona
         res.status(404)
         throw new Error( "404: conta NÃO encontrada, verifique o Id")  
     }
+
         res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
     }catch (error) {
         console.log(error)
@@ -143,6 +146,10 @@ export const createAccount =( async (req: Request, res: Response) => {
       }
     }
       
+    if(newBalance < 0 ){
+        res.send(400)
+        throw new Error('transação invalida a conta não pode começar em negativo')
+    }
 
         const newAccount:TAccount = {
             id:defineIdAccount(idAccount),
