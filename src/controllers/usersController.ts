@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { db } from "../models/knexDB"
 import {v4 as uuidv4} from 'uuid';
-import { createId } from "../helpers/getIdB";
+import { createId } from "../helpers/createId";
 
 export const getAllUsers =( async (req: Request, res: Response) => {
     try {
@@ -78,10 +78,10 @@ export const createUser = ( async (req: Request, res: Response) => {
 
     try {
         const newId = req.body.cpfCnpj as string | undefined
-        const name = req.body.name as string | undefined
+        const name = req.body.registerName as string | undefined
         const nickname = req.body.nickname as string
         const email = req.body.email
-        const password = req.body.password
+        const password = req.body.passwordConfirm
 
         
         if(newId === undefined){

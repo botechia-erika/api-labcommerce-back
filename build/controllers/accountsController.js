@@ -8,10 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editAccount = exports.createAccount = exports.destroyAccount = exports.getAccountById = exports.getAllAcounts = void 0;
 const accounts_1 = require("../dataTS/accounts");
-const getIdB_1 = require("../helpers/getIdB");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const accountsFilePath = path_1.default.join(__dirname, './../../json/dataAccounts.json');
+const accountsDATA = JSON.parse(fs_1.default.readFileSync(accountsFilePath, 'utf-8'));
 exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const q = req.query.q;
@@ -19,20 +25,19 @@ exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, functio
             res.status(200).json(accounts_1.accounts);
         }
         else {
-            function buscaAccountOwner(accounts, q) {
-                return accounts.filter((account) => {
+            function buscaAccountOwner(accountsDATA, q) {
+                return accounts_1.accounts.filter((account) => {
                     if (account.ownerName.toUpperCase().includes(q.toUpperCase())) {
                         return account;
                     }
                 });
             }
-            const [result] = buscaAccountOwner(accounts_1.accounts, q);
-            if (result) {
-                res.status(200).json({ message: "owner tem conta no nosso sistema", result });
+            const [result] = buscaAccountOwner(accountsDATA, q);
+            if (!result) {
+                res.status(404);
+                throw new Error("404 owner NÃO encontrado, insira um nome cadastrado");
             }
-            else {
-                res.status(200).json({ result: null, message: "owner NÃO encontrado" });
-            }
+            res.status(200).json({ message: "owner tem conta no nosso sistema", result });
         }
     }
     catch (error) {
@@ -51,6 +56,10 @@ exports.getAllAcounts = ((req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getAccountById = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
+        if (id[0] !== "a") {
+            res.status(400);
+            throw new Error("'id' deve começar com letra 'a'");
+        }
         const result = accounts_1.accounts.find((account) => account.id === id);
         if (!result) {
             res.status(404);
@@ -74,11 +83,19 @@ exports.getAccountById = ((req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.destroyAccount = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const idToDelete = req.params.id;
-        const result = accounts_1.accounts.findIndex((account) => account.id === idToDelete);
-        if (result != null) {
-            accounts_1.accounts.splice(result);
-            res.status(200).send("account deletado com sucesso");
+        if (idToDelete[0] !== "a") {
+            res.status(400);
+            throw new Error("'id' deve começar com letra 'a'");
         }
+        const result = accounts_1.accounts.findIndex((account) => account.id === idToDelete);
+        if (result === -1) {
+            res.status(404);
+            throw new Error("404: conta NÃO encontrada, verifique o Id");
+        }
+        if (result >= 0) {
+            accounts_1.accounts.splice(result, 1);
+        }
+        res.status(200).send("account deletado com sucesso");
     }
     catch (error) {
         console.log(error);
@@ -99,14 +116,32 @@ exports.createAccount = ((req, res) => __awaiter(void 0, void 0, void 0, functio
         const newOwner = req.body.ownerName;
         const newBalance = req.body.balance;
         const newType = req.body.type;
-        const id = (0, getIdB_1.createId)(newId);
+        const idAccount = accountsDATA.length;
+        const defineIdAccount = (idAccount) => {
+            if (idAccount < 10) {
+                const id = "a00" + idAccount;
+                return id;
+            }
+            else if (idAccount < 100) {
+                const id = "a0" + idAccount;
+                return id;
+            }
+            else if (idAccount > 100) {
+                const id = "a" + idAccount;
+            }
+        };
+        if (newBalance < 0) {
+            res.send(400);
+            throw new Error('transação invalida a conta não pode começar em negativo');
+        }
         const newAccount = {
-            id,
+            id: defineIdAccount(idAccount),
             ownerName: newOwner,
             balance: newBalance,
             type: newType
         };
-        accounts_1.accounts.push(newAccount);
+        accountsDATA.push(newAccount);
+        fs_1.default.writeFileSync(accountsFilePath, JSON.stringify(accountsDATA, null, 4), 'utf8');
         res.status(201).json({ message: 'account agregado com sucesso', newAccount });
     }
     catch (error) {

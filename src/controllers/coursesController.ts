@@ -4,7 +4,7 @@ import {v4 as uuidv4} from 'uuid';
 import { TCourse } from "../types/types"
 import { courses } from "../dataTS/courses"
 import { COURSE_STACK } from "../types/types"
-import { createId } from "../helpers/getIdB";
+import { createId } from "../helpers/createId";
 // inicio aula api-express
 export const getAllCourses = ( async (req: Request, res: Response) => {
   

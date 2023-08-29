@@ -2,26 +2,27 @@ import { Request, Response } from "express";
 import { db } from "../models/knexDB";
 import { DESCRIPTION_CATEGORY, TProductDB } from "../types/types";
 import {v4 as uuidv4} from 'uuid';
-import { createId } from "../helpers/getIdB";
+import { createId } from "../helpers/createId";
 import { matchDescriptionCategory } from "../helpers/matchDescriptionCategory";
 
 export const createProduct = ( async (req: Request, res: Response) => {
 
     try {
-        const newPlaca = req.body.placa as string 
+        const newPlaca = req.body.placa as string || undefined
         const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano as string
         const newDescription = req.body.description as string | undefined  
         const newImage = req.body.image_url as string | undefined
         const newPrice = req.body.price as number
-      
+
      
-    
+
+
         if (typeof newName != typeof "string" ) {
             res.status(400)
             throw new Error ('400 nome do deve seguir o formato "MODELO MARCA ANO" ')
         }
 
-        if(typeof newPlaca !== typeof "string"){
+        if( typeof newPlaca !== typeof "string"){
             res.status(400)
             throw new Error ("400: placa deve ser alfa numerica")
         }
@@ -45,7 +46,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
 
 
         const newAccount:TProductDB= {
-            id:newPlaca,
+            id:createId(newPlaca),
             name:newName,
             description:matchDescriptionCategory(newPrice),
             image_url:newImage,
@@ -86,7 +87,6 @@ export const getAllProducts=( async (req: Request, res: Response) => {
             throw new Error('Pesquisa deve ter ao menos 1 caracter')
         }
 
-
        const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
         if(!result){
             res.status(404)
@@ -118,11 +118,11 @@ export const editProductById = (async (req: Request, res: Response) => {
         const newImg = req.body.image_url as string | undefined;
         const newPrice = req.body.price as   number | undefined;
 
-        /*const [productExists] = await db.raw(`SELECT id FROM products WHERE id="idSelect"`)
-        if(!productExists){
+       const [productExists] = await db("products").where("id" , "LIKE", `${idSelect}`)
+        if(productExists){
             res.status(404);
             throw new Error("404: Produto não cadastrado");
-        }*/
+        }
 
 
         if (nameSelect !== undefined) {

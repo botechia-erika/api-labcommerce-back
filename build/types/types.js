@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CURRENTSTATUS = exports.ACCOUNT_TYPE = exports.COURSE_STACK = exports.arrayPersonRole = exports.ACCOUNT = exports.ROLE = void 0;
+exports.DESCRIPTION_CATEGORY = exports.CURRENTSTATUS = exports.ACCOUNT_TYPE = exports.COURSE_STACK = exports.arrayPersonRole = exports.ACCOUNT = exports.ROLE = void 0;
 var ROLE;
 (function (ROLE) {
     ROLE["ADMIN"] = "Admin";
     ROLE["NORMAL"] = "Normal";
+    ROLE["BUYER"] = "Buyer";
 })(ROLE || (exports.ROLE = ROLE = {}));
 const usuario = {
     id: 1,
@@ -98,4 +99,12 @@ const Title = {
     product: "AULAS",
     value: "LABENU"
 };
+var DESCRIPTION_CATEGORY;
+(function (DESCRIPTION_CATEGORY) {
+    DESCRIPTION_CATEGORY["LIGHT"] = "Light";
+    DESCRIPTION_CATEGORY["HATCH"] = "Hatch";
+    DESCRIPTION_CATEGORY["SEDAN"] = "Sedan";
+    DESCRIPTION_CATEGORY["PRIME"] = "Prime";
+    DESCRIPTION_CATEGORY["LUX"] = "Lux";
+})(DESCRIPTION_CATEGORY || (exports.DESCRIPTION_CATEGORY = DESCRIPTION_CATEGORY = {}));
 //# sourceMappingURL=types.js.map
