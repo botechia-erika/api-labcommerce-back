@@ -193,6 +193,7 @@ CREATE TABLE classrooms(
     name TEXT NOT NULL
 );
 
+
 CREATE TABLE students (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
@@ -207,3 +208,116 @@ SELECT * FROM purchases WHERE id = PG001
 JOIN products 
 WHERE products.id=product_id;
 
+-- AULA INTRO SQL
+CREATE TABLE IF NOT EXISTS books(
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL ,
+    author TEXT NOT NULL ,
+    page_count INTEGER ,
+    price REAL NOT NULL
+);
+DROP TABLE books;
+SELECT * FROM books;
+
+
+
+
+INSERT INTO books(
+    id,
+    name,
+    author,
+    page_count,
+    price
+) VALUES(
+    "3012928",
+    "O Quinze",
+    "Raquel de Quiroz", 
+    208,
+    24.9
+);
+
+INSERT INTO books(
+    id,
+    name,
+    author,
+    page_count,
+    price
+) VALUES(
+    "8503012928",
+    "O Quinze",
+    "Raquel de Queiroz", 
+    208,
+    24.95
+);
+
+
+
+
+INSERT INTO books(
+    id,
+    name,
+    author,
+    price
+) VALUES(
+    "8578897239",
+    "Dom Casmurro",
+    "Machado de Assis", 
+    46.77
+);
+
+UPDATE books 
+SET page_count = 463
+WHERE id="8503012928"
+
+-- TASKS
+
+CREATE TABLE tasks (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status INTEGER NOT NULL DEFAULT 0 
+);
+SELECT * FROM tasks;
+DROP TABLE  tasks;
+
+CREATE TABLE user_tasks (
+    user_id TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+SELECT * FROM user_tasks;
+DROP TABLE user_tasks;
+
+INSERT INTO user_tasks  (
+    user_id, task_id 
+) VALUES (
+    "f003",
+    "t001"
+),(
+    "f003",
+     "t002"
+  ),
+( 
+"f003",
+    "t003"
+);
+
+INSERT INTO tasks  (
+    id, title, description 
+) VALUES(
+    "t001",
+    "criar header",
+    "criar header para frontend unico labecommerce, labeedit e labebooks"
+),(
+     "t002",
+    "criar footer",
+    "criar footer para frontend unico labecommerce, labeedit e labebooks"
+),
+( 
+    "t003",
+    "criar componentes do labecommerce",
+    "criar componentes para frontend unico labecommerce, labeedit e labebooks"
+);

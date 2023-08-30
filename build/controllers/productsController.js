@@ -11,10 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyProduct = exports.getProductById = exports.editProductById = exports.getAllProducts = exports.createProduct = void 0;
 const knexDB_1 = require("../models/knexDB");
+const createId_1 = require("../helpers/createId");
 const matchDescriptionCategory_1 = require("../helpers/matchDescriptionCategory");
 exports.createProduct = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newPlaca = req.body.placa;
+        const newPlaca = req.body.placa || undefined;
         const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano;
         const newDescription = req.body.description;
         const newImage = req.body.image_url;
@@ -36,7 +37,7 @@ exports.createProduct = ((req, res) => __awaiter(void 0, void 0, void 0, functio
             throw new Error("400: imagem deve corresponder a endereço URL VALIDO");
         }
         const newAccount = {
-            id: newPlaca,
+            id: (0, createId_1.createId)(newPlaca),
             name: newName,
             description: (0, matchDescriptionCategory_1.matchDescriptionCategory)(newPrice),
             image_url: newImage,
@@ -99,6 +100,11 @@ exports.editProductById = ((req, res) => __awaiter(void 0, void 0, void 0, funct
         const nameSelect = req.body.name;
         const newImg = req.body.image_url;
         const newPrice = req.body.price;
+        const [productExists] = yield (0, knexDB_1.db)("products").where("id", "LIKE", `${idSelect}`);
+        if (productExists) {
+            res.status(404);
+            throw new Error("404: Produto não cadastrado");
+        }
         if (nameSelect !== undefined) {
             const confereNome = yield knexDB_1.db.raw(`SELECT name FROM products WHERE id="idSelect"`);
             if (nameSelect && confereNome !== nameSelect) {

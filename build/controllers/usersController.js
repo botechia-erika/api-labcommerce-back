@@ -74,10 +74,10 @@ exports.getUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newId = req.body.cpfCnpj;
-        const name = req.body.name;
+        const name = req.body.registerName;
         const nickname = req.body.nickname;
         const email = req.body.email;
-        const password = req.body.password;
+        const password = req.body.passwordConfirm;
         if (newId === undefined) {
             res.status(400);
             throw new Error("400 : 'cpf' ou 'cnpj' deve ser informado em cadastro");
