@@ -7,29 +7,25 @@ import fs from 'fs'
 import path from 'path'
 const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8'))
-
+import { db } from "../models/knexDB";
 
 export const getAllAcounts = ( async (req: Request, res: Response) => {
     try {
-        const q = req.query.q as string | undefined      
+        const q = req.query.q as string | undefined  
+
+        
         if (q === undefined) {
-            res.status(200).json( accountsDATA )
+            const result = await db.raw(`select * from accounts`)   
+
+            res.status(200).json( result )
         }else {
-           function buscaAccountOwner(accountsDATA:TAccount[], q:string){
-                return accountsDATA.filter(
-                    (account)=>{
-                        if( account.ownerName.toUpperCase().includes(q.toUpperCase())){
-                            return account
-                        }
-                    }
-                )
-            }
-            const [result] = buscaAccountOwner(accountsDATA, q)
-            if(!result){
-                res.status(404)
-                throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
-            }
-res.status(200).json({ message: "'NOME' do ownwer encontrado no nosso sistema" , result})
+            
+        const result = await db.raw(`SELECT * FROM accounts WHERE name LIKE %${q}%`)
+        if(!result){
+            res.status(404)
+            throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
+        }
+    res.status(200).json({ message: "'NOME' do ownwer encontrado no nosso sistema" , result})
     }
     } catch (error) {
         console.log(error)

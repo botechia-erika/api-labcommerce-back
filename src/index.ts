@@ -36,7 +36,54 @@ app.use('/users', usersRouter)
 app.get("/", (req: Request, res: Response) => {
     res.send(
         `
+
+        <style>
+        *{
+            box-sizing: border-box;
+            margin:0;
+            padding:0;
+        }
+
+        header{
+            display: grid;
+            height:200px;
+            color: white;
+            background: #353535;
+            padding: 3rem;
+        }
+
+        </style>
+        
+        
+        <header>
         <h1>Bem - vindo ao Labecommerce!</h1>
+        </header>
+
+        <main>
+        <aside>
+        <details>
+        <summary>Details</summary>
+        Something small enough to escape casual notice.
+      </details>
+
+      <details>
+  <summary>Details</summary>
+  Something small enough to escape casual notice.
+</details>
+
+<details>
+  <summary>Details</summary>
+  Something small enough to escape casual notice.
+</details>
+
+        </aside>
+        <section>
+        <h2>HEADER</h2>
+        
+        </section>
+        </main>
+
+
         `
     )
 })

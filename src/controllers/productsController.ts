@@ -1,20 +1,17 @@
 import { Request, Response } from "express";
 import { db } from "../models/knexDB";
-import { DESCRIPTION_CATEGORY, TProductDB } from "../types/types";
-import {v4 as uuidv4} from 'uuid';
+import { DESCRIPTION_CATEGORY, TProductDB } from '../types/types';
 import { createId } from "../helpers/createId";
 import { matchDescriptionCategory } from "../helpers/matchDescriptionCategory";
 
 export const createProduct = ( async (req: Request, res: Response) => {
 
     try {
-        const newPlaca = req.body.placa as string || undefined
         const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano as string
-        const newDescription = req.body.description as string | undefined  
+        const newPlaca = req.body.placa as string | undefined  
         const newImage = req.body.image_url as string | undefined
         const newPrice = req.body.price as number
-
-     
+        const newDescription = req.body.description as string 
 
 
         if (typeof newName != typeof "string" ) {
@@ -27,7 +24,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
             throw new Error ("400: placa deve ser alfa numerica")
         }
 
-        if (!newPlaca.match(/[A-Z]{3}[-][0-9]{4}/g)) {
+        if (newPlaca && !newPlaca.match(/[A-Z]{3}[-][0-9]{4}/g)) {
                 res.status(400)
                 throw new Error ("400: placa deve seguir o padrão AAA-0000")
         }
@@ -37,22 +34,23 @@ export const createProduct = ( async (req: Request, res: Response) => {
             throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
         }
 
-     /*    const  idDBExists  = await db.raw(`SELECT * FROM products WHERE id="${newPlaca}"`)
+       /* const  [idDBExists]  = await db.raw(`SELECT * FROM products WHERE id="${newPlaca}"`)
 
-        if (idDBExists && idDBExists !== undefined) {
+        if (idDBExists !== undefined) {
             res.status(400)
             throw new Error("'placa' já cadastrada")
         } */
 
+   
 
-        const newAccount:TProductDB= {
+        const newProduct: { description: string, id: string, name: string,image_url: string, price: number}= {
             id:createId(newPlaca),
             name:newName,
-            description:matchDescriptionCategory(newPrice),
             image_url:newImage,
+            description:newDescription,
             price:newPrice
         }
-            await db("products").insert(newAccount)
+            await db("products").insert(newProduct)
     
         res.status(201).send("produto cadastrado com sucesso")
     } catch (error) {
@@ -113,20 +111,20 @@ export const getAllProducts=( async (req: Request, res: Response) => {
 
 export const editProductById = (async (req: Request, res: Response) => {
     try {
-        const idSelect = req.params.id;
+        const id = req.params.id;
         const nameSelect = req.body.name as undefined  | string
         const newImg = req.body.image_url as string | undefined;
         const newPrice = req.body.price as   number | undefined;
 
-       const [productExists] = await db("products").where("id" , "LIKE", `${idSelect}`)
-        if(productExists){
+       const productExists = await db("products").where("id" , "LIKE", `${id}`)
+        if(!productExists){
             res.status(404);
             throw new Error("404: Produto não cadastrado");
         }
 
 
         if (nameSelect !== undefined) {
-            const confereNome = await db.raw(`SELECT name FROM products WHERE id="idSelect"`)
+            const confereNome = await db.raw(`SELECT name FROM products WHERE id="id"`)
             if (nameSelect && confereNome !== nameSelect) {
                 res.status(400);
                 throw new Error("Nome do produto cadastrado não deve ser alterado");
@@ -148,15 +146,15 @@ export const editProductById = (async (req: Request, res: Response) => {
             }
         }
 
-        const [product4edit] = await db.raw(`SELECT * FROM products WHERE id="${idSelect}"`);
+        const [product4edit] = await db.raw(`SELECT * FROM products WHERE id="${id}"`);
         if (product4edit) {
-                product4edit.id = idSelect,
+                product4edit.id = id,
                 product4edit.name = nameSelect||product4edit.name,
                 product4edit.description = matchDescriptionCategory(newPrice),
                 product4edit.image_url= newImg|| product4edit.image_url,
                 product4edit.price = newPrice || product4edit.price
         }
-                await db("products").update(product4edit).where({id :`${idSelect}`})
+                await db("products").update(product4edit).where({id :`${id}`})
                 res.status(200).send({message: "produto atualizado com sucesso", result: product4edit})
             } catch (error) {
                 console.log(error)

@@ -1,4 +1,4 @@
--- Active: 1693214993538@@127.0.0.1@3306
+-- Active: 1693420646934@@127.0.0.1@3306
 
 
 
@@ -321,3 +321,104 @@ INSERT INTO tasks  (
     "criar componentes do labecommerce",
     "criar componentes para frontend unico labecommerce, labeedit e labebooks"
 );
+
+-- Conecte o arquivo pratica-aprofundamento-sql.db com a extensão MySQL e ative a conexão aqui
+
+-- Deletar tabela
+DROP TABLE pokemons;
+
+-- Criar tabela
+CREATE TABLE pokemons (
+    id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL,
+    hp INTEGER NOT NULL,
+    attack INTEGER NOT NULL,
+    defense INTEGER NOT NULL,
+    special_attack INTEGER NOT NULL,
+    special_defense INTEGER NOT NULL,
+    speed INTEGER NOT NULL
+);
+
+-- Popular tabela
+INSERT INTO pokemons (
+    id,
+    name,
+    type,
+    hp,
+    attack,
+    defense,
+    special_attack,
+    special_defense,
+    speed
+)
+VALUES 
+    (1, "bulbasaur", "grass", 45, 49, 49, 65, 65, 45),
+    (2, "ivysaur", "grass", 60, 62, 63, 80, 80, 60),
+    (3, "venusaur", "grass", 80, 82, 83, 100, 100, 80),
+    (4, "charmander", "fire", 39, 52, 43, 60, 50, 65),
+    (5, "charmeleon", "fire", 58, 64, 58, 80, 65, 80),
+    (6, "charizard", "fire", 78, 84, 78, 109, 85, 100),
+    (7, "squirtle", "water", 44, 48, 65, 50, 64, 43),
+    (8, "wartortle", "water", 59, 63, 80, 65, 80, 58),
+    (9, "blastoise", "water", 79, 83, 100, 85, 105, 78);
+
+-- Buscar todos os pokemons
+SELECT * FROM pokemons;
+SELECT name, attack, special_attack FROM pokemons
+WHERE attack >= 60  AND special_attack >= 60;
+-- Práticas
+
+SELECT * FROM pokemons WHERE ATTACK >= 60;
+SELECT name FROM pokemons WHERE name LIKE "%saur";
+
+CREATE TABLE accounts(
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    owner TEXT NOT NULL,
+    balance REAL NOT NULL,
+    category TEXT NOT NULL
+);
+
+INSERT INTO accounts (id, owner, balance, category)
+VALUEs(
+        "a001",
+        "Ciclano",
+       10000,
+        "Gold"
+),
+(
+       "a002",
+        "Astrodev",
+        500000,
+        "Black"
+),
+(
+         "a003",
+         "Fulana",
+       20000,
+        "Platinum"
+),
+    (
+         "a004",
+         "wilsom",
+       10500,
+        "Ouro"
+),
+    (
+         "a0058801bd24-3ce0-42fc-9fd6-be112afdfc35",
+        "Melissa",
+        10900,
+         "Ouro"
+   )
+;
+
+
+SELECT * FROM accounts WHERE owner LIKE "%a%"
+
+COUNT(0)  TABLE USERS;
+
+SELECT name, defense FROM pokemons ORDER BY defense DESC;
+
+SELECT * from pokemons GROUP BY TYPE;
+
+SELECT * FROM accounts LIMIT 3;

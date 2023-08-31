@@ -9,14 +9,14 @@ export const getAllUsers =( async (req: Request, res: Response) => {
         if(searchTerm === undefined){
         const message = "LISTA DE USERS CADASTRADO DO SISTEMA"
         const result = await db("users")
-        res.status(200).json({ result})
+        res.status(200).json(result)
     }else{
     
        const [result] =await db("users").where("name", "LIKE" , `%${searchTerm}%`)
         if(![result]|| result == null){
             res.status(404).json({message: "USER NÃO ENCONTRADO"})     
         }else{
-        res.status(200).json({result : [result], message: "USER ENCONTRADO"})
+        res.status(200).json({result ,  message: "USER ENCONTRADO"})
     }
 }}
     catch (error) {
