@@ -28,19 +28,29 @@ export const getAllPurchases = ( async (req: Request, res: Response) => {
 export const getPurchaseById = ( async (req: Request, res: Response) => {
   
     try {
-        const id = req.params.id 
-        const result= await db.raw(`
-        FROM PURCHASES
-        INNER JOIN PRODUCTS_PURCHASES
-        ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
-        INNER JOIN PRODUCTS
-        ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
-        WHERE
-        PURCHASE_ID=${id}`
-        )
-         res.status(200).json({ result, message: `RESULTADO PARA PAGAMENTO IDENTIFICADO ${id}`});
+        const idSelect = req.params.id 
+
+        const [pgExists] = await db.raw(`SELECT id FROM purchases WHERE id="${idSelect}"`)
+
+        if(!pgExists){
+            res.status(404);
+            throw new Error("404: Pagamento NÃO Cadastrado");
+        }
     
-    }catch (error) {
+
+        const result = await db.raw(`SELECT * FROM products_purchases 
+        INNER JOIN products
+        ON products_purchases.product_id = products.id
+        INNER JOIN purchases
+        ON products_purchases.purchases_id="${idSelect}"`)
+    
+
+        res.status(200).json({ result, message: `RESULTADO PARA PAGAMENTO IDENTIFICADO ${idSelect}`});
+    
+    
+    
+    
+        }catch (error) {
         console.log(error)
 
         if (req.statusCode === 200) {
@@ -107,14 +117,16 @@ export const createPurchase = ( async (req: Request, res: Response) => {
 export const destroyPurchase = ( async (req: Request, res: Response) => {
 
         try {
-            const id = req.params.id
+            const id4Delete = req.params.id
     
-            const [purchaseDelete] = await db("purchases").where({ id: id })
+            const [purchaseDelete] = await db("purchases").where({ id: id4Delete })
+            
             if (!purchaseDelete) {
+                res.status(404);
                 throw new Error("purchase  nao encontrado")
             }
-            await db("purchases").delete().where({ id: `${id}`})
-            res.status(200).json({ message: 'purchase deletado com sucesso' })
+            await db.raw(`DELETE FROM products_purchases WHERE purchases_id="${purchaseDelete}"`)
+            res.status(200).json({ message: 'pedido cancelado com sucesso' })
         }
         catch (error) {
             console.log(error)

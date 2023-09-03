@@ -11,9 +11,9 @@ export const createProduct = ( async (req: Request, res: Response) => {
         const newPlaca = req.body.placa as string | undefined  
         const newImage = req.body.image_url as string | undefined
         const newPrice = req.body.price as number
-        const newDescription = req.body.description as string 
+        //const newDescription = req.body.description as string 
 
-
+       
         if (typeof newName != typeof "string" ) {
             res.status(400)
             throw new Error ('400 nome do deve seguir o formato "MODELO MARCA ANO" ')
@@ -33,7 +33,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
             res.status(400)
             throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
         }
-
+   
        /* const  [idDBExists]  = await db.raw(`SELECT * FROM products WHERE id="${newPlaca}"`)
 
         if (idDBExists !== undefined) {
@@ -47,7 +47,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
             id:createId(newPlaca),
             name:newName,
             image_url:newImage,
-            description:newDescription,
+            description:matchDescriptionCategory(newPrice),
             price:newPrice
         }
             await db("products").insert(newProduct)
@@ -75,7 +75,7 @@ export const getAllProducts=( async (req: Request, res: Response) => {
         if(searchTerm === undefined){
         const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
         const result = await db("products")
-        res.status(200).send({ result})
+        res.status(200).send({ message, result: result})
     }else{
         const searchTerm = req.query.q as string | undefined
 
@@ -150,7 +150,7 @@ export const editProductById = (async (req: Request, res: Response) => {
         if (product4edit) {
                 product4edit.id = id,
                 product4edit.name = nameSelect||product4edit.name,
-                product4edit.description = matchDescriptionCategory(newPrice),
+                product4edit.description = matchDescriptionCategory(product4edit.price),
                 product4edit.image_url= newImg|| product4edit.image_url,
                 product4edit.price = newPrice || product4edit.price
         }

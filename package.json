@@ -7,12 +7,9 @@
     "node": "node ./src/index.js",
     "start": "clear && node ./src/index.js",
     "cinco": "tsc && node ./build/index.js",
-    "bananinha": "tsc && node ./Labenu/bananinha.js",
     "build": "tsc",
     "dev": "tsnd ./src/index.ts",
-    "argumento": "node node-package-json/processArgv.js",
-    "serve": "nodemon ./server/index.js",
-    "america": " start ./node-package-json-template/pratica1.js"
+    "serve": "nodemon ./server/index.js"
   },
   "keywords": [
     "to-do-list"

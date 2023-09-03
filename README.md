@@ -1,18 +1,10 @@
 # api-labcommerce-back
  lbn projeto backend 2023 refatorizado
 
-## OBJETIVOS
-- [x] Get all users
-- [x]  Create user
-- [x]  Create product
-- [x]  Get all products funcionalidades 1 e 2
-- [x]  Edit product by id
-- [x]  Create purchase
-- [x]  Delete purchase by id
-- [x]  Get purchase by id
-
 
 ## REGRA DE NEGOCIO IMPLEMENTADA
+
+## LABECOMMERCE - LabeFrota
 ### EMPRESA
 - Locadora de carros por periodo mensal
 
@@ -35,6 +27,21 @@
     - image_url: ingresa como newImage e é validada por um RegEx para url validas,
     - price: valor numerico ingressado como newPrice que ademas de determinar preço mensal do produto serve de parametro para função matchDescriptionCategory que determina a descrição do produto e essa é equivalente a categoria pré estabelecida em explicação anteriormente citada (CATEGORIAS)
 
+## PURCHASES 
+- Oferece opções de pagamento com desconto e com acréscimo
+  1. Á VISTA: 
+
+
+
+## OBJETIVOS
+- [x] Get all users
+- [x]  Create user
+- [x]  Create product
+- [x]  Get all products funcionalidades 1 e 2
+- [x]  Edit product by id
+- [x]  Create purchase
+- [x]  Delete purchase by id
+- [x]  Get purchase by id
 
 
 ## Collection: **Users**

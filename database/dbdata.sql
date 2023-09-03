@@ -1,5 +1,5 @@
--- Active: 1693420646934@@127.0.0.1@3306
-
+-- SQLBook: Code
+-- Active: 1693518175331@@127.0.0.1@3306
 
 
 CREATE TABLE USERS (
@@ -20,25 +20,18 @@ INSERT INTO USERS(
     EMAIL,
     PASSWORD
 ) VALUES (
-    "f001",
-    "FULANO",
-    "fulano-bastos",
-    "fulano@email.com",
-    "jzD_yyEcp0M"
+    "u001",
+    "MARCELO REZENDE",
+    "MARCELO-REZENDE",
+    "marcelo@email.com",
+    "marcelo123"
 ),
 (
-    "f002",
-    "BELTRANO",
-    "beltrano-silva",
-    "beltranosilva@email.com",
-    "m4PlFzASXUc"
-),
-(
-    "f003",
-    "ERIKA LUISA MENDONCA BOTECHIA DE JESUS LEITE",
-    "erika-botechia",
-    "botechiaeri@gmail.com",
-    "Conway22124748"
+    "u002",
+    "LAURA SILVA",
+    "lau-silva",
+    "lau@email.com",
+    "lau123"
 );
 
 SELECT
@@ -116,70 +109,6 @@ SELECT
 FROM
     PRODUCTS;
 
-CREATE TABLE PURCHASES(
-    ID TEXT PRIMARY KEY NOT NULL UNIQUE,
-    PRODUCT_ID TEXT NOT NULL,
-    QUANTITY INTEGER NOT NULL,
-    TOTAL_PRICE REAL NOT NULL,
-    BUYER_ID TEXT NOT NULL,
-    FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCTS(ID) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (BUYER_ID) REFERENCES USERS(ID) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-DROP TABLE PURCHASES;
-
-INSERT INTO PURCHASES(
-    ID,
-    PRODUCT_ID,
-    QUANTITY,
-    TOTAL_PRICE,
-    BUYER_ID
-) VALUES (
-    "PG001",
-    "P001",
-    1,
-    7,
-    "u001"
-),
-(
-    "PG002",
-    "P002",
-    1,
-    8,
-    "u002"
-),
-(
-    "PG003",
-    "P003",
-    1,
-    7,
-    "u003"
-);
-
-SELECT
-    *
-FROM
-    PURCHASES;
-
-SELECT
-    *
-FROM
-    PRODUCTS_PURCHASES;
-
-SELECT
-    PRODUCTS.NAME,
-    PRODUCTS.PRICE,
-    PURCHASES.QUANTITY,
-    PURCHASES.TOTAL_PRICE,
-    PURCHASES.BUYER_ID
-FROM
-    PURCHASES
-    INNER JOIN PRODUCTS_PURCHASES
-    ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
-    INNER JOIN PRODUCTS
-    ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
-WHERE
-    PURCHASE_ID="PG001";
 
 SELECT
     *
@@ -422,3 +351,131 @@ SELECT name, defense FROM pokemons ORDER BY defense DESC;
 SELECT * from pokemons GROUP BY TYPE;
 
 SELECT * FROM accounts LIMIT 3;
+
+
+CREATE TABLE classrooms(
+   id TEXT PRIMARY KEY UNIQUE NOT NULL,
+   name TEXT UNIQUE NOT NULL
+);
+INSERT INTO classrooms (id, name)
+VALUES ('c001', 'A');
+
+SELECT * FROM classrooms;
+CREATE TABLE students(
+   id TEXT PRIMARY KEY UNIQUE NOT NULL,
+   user_id TEXT NOT NULL,
+   classroom_id TEXT NOT NULL,
+   FOREIGN KEY (classroom_id) REFERENCES classroom(id)
+   FOREIGN KEY (user_id) REFERENCES users(id)
+);
+INSERT INTO students(id, user_id, classroom_id)
+VALUES ('s001', 'f001', 'c001');
+DROP TABLE students;
+SELECT * FROM students;
+
+
+SELECT 
+    *
+FROM students
+INNER JOIN users
+ON user_id = users.id;
+
+SELECT *
+FROM users
+RIGHT JOIN students
+ON users.id = students.user_id;
+CREATE TABLE phones(
+   id TEXT PRIMARY KEY UNIQUE NOT NULL,
+   user_id TEXT  NOT NULL,
+   phone_number TEXT NOT NULL,
+   FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+INSERT INTO phones (id, user_id, phone_number ) VALUES 
+    ("p001",  "u001" ,"559399999393"),
+     ('p002', 'u001', '559399991561')
+  ;
+INSERT INTO phones (id, user_id, phone_number ) VALUES 
+    ("p004",  "u003" ,"5593865135131")
+  ;
+SELECT * FROM phones;
+DROP TABLE phones;
+INSERT INTO phones (id, user_id, phone_number)VALUES
+("p003",  "u001" ,"5593865131");
+SELECT 
+    email,
+    name
+FROM users
+INNER JOIN phones
+ON phones.user_id = users.id;
+
+
+CREATE TABLE products_purchases(
+    purchases_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL
+);
+
+DROP TABLE products_purchases;
+
+INSERT INTO products_purchases(
+    purchases_id, product_id, quantity
+)VALUES(
+    "PG001",
+    "DFE-3388",
+    7
+);
+
+CREATE TABLE PURCHASES(
+    ID TEXT PRIMARY KEY NOT NULL UNIQUE,
+    BUYER TEXT NOT NULL,
+    TOTAL_PRICE REAL NOT NULL,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PAID INTEGER DEFAULT 0,
+    FOREIGN KEY (ID) REFERENCES products_purchases(PURCHASES_ID) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (BUYER) REFERENCES USERS(ID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE PURCHASES;
+SELECT * FROM purchases;
+INSERT INTO PURCHASES(
+    id,
+    buyer,
+    total_price,
+    paid
+) VALUES (
+    "PG001",
+    "268.809.688-56",
+    10500,
+    1
+);
+
+SELECT
+    *
+FROM
+    PURCHASES;
+
+SELECT
+    *
+FROM
+    PRODUCTS_PURCHASES;
+
+SELECT
+    PRODUCTS.NAME,
+    *
+FROM
+    PURCHASES
+    INNER JOIN PRODUCTS_PURCHASES
+    ON PURCHASES.ID = PRODUCTS_PURCHASES.PURCHASE_ID
+    INNER JOIN PRODUCTS
+    ON PRODUCTS_PURCHASES.PRODUCT_ID = PRODUCTS.ID
+WHERE
+    PURCHASE_ID="PG001";
+
+-- SQLBook: Code
+SELECT * FROM products_purchases 
+INNER JOIN products
+ON products_purchases.product_id = products.id
+INNER JOIN purchases
+ON products_purchases.purchases_id = "PG001"

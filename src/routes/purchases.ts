@@ -5,7 +5,7 @@ import * as  purchasesController from './../controllers/purchasesController'
 
 const router = express.Router()
 
-router.get("/" , purchasesController.getPurchaseById)
+router.get("/" , purchasesController.getAllPurchases)
 router.get("/:id" , purchasesController.getPurchaseById)
 router.delete("/:id" , purchasesController.destroyPurchase)
 router.post("/", purchasesController.createPurchase)
