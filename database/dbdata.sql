@@ -344,7 +344,6 @@ VALUEs(
 
 SELECT * FROM accounts WHERE owner LIKE "%a%"
 
-COUNT(0)  TABLE USERS;
 
 SELECT name, defense FROM pokemons ORDER BY defense DESC;
 
@@ -428,13 +427,12 @@ INSERT INTO products_purchases(
 );
 
 CREATE TABLE PURCHASES(
-    ID TEXT PRIMARY KEY NOT NULL UNIQUE,
-    BUYER TEXT NOT NULL,
-    TOTAL_PRICE REAL NOT NULL,
-    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PAID INTEGER DEFAULT 0,
-    FOREIGN KEY (ID) REFERENCES products_purchases(PURCHASES_ID) ON UPDATE CASCADE ON DELETE CASCADE
-    FOREIGN KEY (BUYER) REFERENCES USERS(ID) ON UPDATE CASCADE ON DELETE CASCADE
+    id TEXT PRIMARY KEY NOT NULL UNIQUE,
+    buyer TEXT NOT NULL,
+    total_price REAL NOT NULL,
+      paid  INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 DROP TABLE PURCHASES;
@@ -446,16 +444,30 @@ INSERT INTO PURCHASES(
     paid
 ) VALUES (
     "PG001",
-    "268.809.688-56",
+    "400.032.000-21",
     10500,
+    1
+), (
+    "PG002",
+    "268.809.688-56",
+    2700,
     1
 );
 
 SELECT
-    *
+    purchases.id,
+    purchases.buyer,
+    purchases.created_at,
+    purchases.total_price, 
+    name,
+    email
 FROM
-    PURCHASES;
-
+    users
+    INNER JOIN PURCHASES
+    ON buyer = users.id;
+UPDATE purchases
+SET total_price = 5400
+WHERE id = "PG002";
 SELECT
     *
 FROM
