@@ -14,11 +14,13 @@ import coursesRouter from './routes/courses'
 import  accountsRouter from './routes/accounts';
 import usersRouter from './routes/users'
 import purchasesRouter from './routes/purchases'
-
+import { User } from './models/Users';
 console.log(arrayPersonRole)
 const app = express()
-
-
+import { ROLES } from './models/Users';
+import { Purchases, ProductPurchased } from './models/Purchases';
+const user1 = new User("idU1", "user de classe", "@userClass", "getClassUser@name", ROLES.NORMAL  )
+console.log(user1)
 
 
 app.use(cors())
@@ -32,7 +34,7 @@ app.use('/products', productsRouter)
 app.use('/courses', coursesRouter)
 app.use('/accounts', accountsRouter)
 app.use('/users', usersRouter)
-app.use('/purchases', purchasesRouter)
+//app.use('/purchases', purchasesRouter)
 // rota raiz serve como indice para endpoints
 app.get("/", (req: Request, res: Response) => {
     res.send(
@@ -327,7 +329,7 @@ app.get("/", (req: Request, res: Response) => {
         </style>
         
         
-        <header>
+        <header className='A1'>
         <h1>Documentação Labecommerce</h1>
         </header>
 

@@ -491,3 +491,72 @@ INNER JOIN products
 ON products_purchases.product_id = products.id
 INNER JOIN purchases
 ON products_purchases.purchases_id = "PG001"
+
+--pratica relacoes 2
+
+CREATE TABLE follows(
+     follower_id TEXT NOT NULL,
+     followed_id TEXT NOT NULL,
+     FOREIGN KEY (follower_id) REFERENCES users(id),
+     FOREIGN KEY (followed_id) REFERENCES  users(id)
+     
+);
+
+SELECT * FROM follows;
+
+--A SEGUE B E C
+-- B SEGUE A
+-- C NÃP SEGUE NINGUEM
+
+INSERT INTO follows (
+     follower_id, followed_id
+)
+VALUES
+("f001", "f002"),
+("f001","f003"),
+("f002","f001");
+
+SELECT * FROM users
+INNER JOIN follows
+ON follows.follower_id = users.id;
+
+SELECT 
+* 
+FROM users
+LEFT JOIN follows
+ON follows.followed_id = users.id
+;
+
+--- PRATICA 3.2
+
+SELECT 
+users.id as usersId,
+users.name,
+users.email,
+users.password,
+users.created_at as createdAt,
+follows.follower_id AS followerId,
+follows.followed_id AS followedId,
+userFollowed.name AS nameFollowed
+FROM users
+INNER JOIN follows
+ON follows.followed_id = users.id
+INNER JOIN users AS userFollowed
+INNER JOIN users AS followedId
+ON follows.followed_id = users.id
+;
+
+
+--REMOVER AMBIGUIDADES
+
+
+SELECT 
+users.id as usersId,
+users.name,
+users.email
+FROM users
+LEFT JOIN follows
+ON follows.followed_id = users.id
+INNER JOIN users AS userFollowed
+ON follows.followed_id = usersFollowed.id
+;
