@@ -14,6 +14,7 @@ import coursesRouter from './routes/courses'
 import  accountsRouter from './routes/accounts';
 import usersRouter from './routes/users'
 import purchasesRouter from './routes/purchases'
+import bandsRouter from './routes/bands'
 import { User } from './models/Users';
 console.log(arrayPersonRole)
 const app = express()
@@ -34,6 +35,8 @@ app.use('/products', productsRouter)
 app.use('/courses', coursesRouter)
 app.use('/accounts', accountsRouter)
 app.use('/users', usersRouter)
+
+app.use('/bands ', bandsRouter)
 //app.use('/purchases', purchasesRouter)
 // rota raiz serve como indice para endpoints
 app.get("/", (req: Request, res: Response) => {

@@ -21,9 +21,12 @@
   "author": "botechia-erika <mendoncabotechia@proton.me>",
   "license": "MIT",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.3",
+    "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.13",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.2.5",
     "@types/uuid": "^9.0.2",
     "colors": "^1.4.0",
@@ -32,9 +35,12 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^2.4.2",
     "package": "^1.0.1",
     "sqlite3": "^5.1.6",

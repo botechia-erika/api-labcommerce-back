@@ -529,6 +529,7 @@ ON follows.followed_id = users.id
 
 --- PRATICA 3.2
 
+--REMOVER AMBIGUIDADES
 SELECT 
 users.id as usersId,
 users.name,
@@ -547,16 +548,60 @@ ON follows.followed_id = users.id
 ;
 
 
---REMOVER AMBIGUIDADES
 
 
-SELECT 
-users.id as usersId,
-users.name,
-users.email
-FROM users
-LEFT JOIN follows
-ON follows.followed_id = users.id
-INNER JOIN users AS userFollowed
-ON follows.followed_id = usersFollowed.id
-;
+
+--RELACOES SQL2 PROJETO
+
+
+CREATE TABLE purchases_products (
+     purchase_id TEXT NOT NULL,
+     product_id TEXT NOT NULL,
+     quantity INTEGER NOT NULL,
+     FOREIGN KEY (purchase_id) REFERENCES purchases(id) ON UPDATE CASCADE ON DELETE CASCADE,
+     FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
+)
+
+SELECT * FROM purchases_products;
+
+DROP TABLE bands;
+DROP TABLE songs;
+-- Tabelas já foram criadas
+CREATE TABLE bands (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL
+);
+INSERT INTO bands (
+     id, name
+)
+VALUES
+("d78bfa51-6b18-4629-a0e6-396890617273", "TAN BIONICA");
+CREATE TABLE songs (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    band_id TEXT NOT NULL,
+    FOREIGN KEY (band_id) REFERENCES bands (id)
+);
+
+
+SELECT * FROM bands;
+INSERT INTO songs (
+     id, name, band_id
+)
+VALUES
+("/watch?v=V419yO6FeIU", "ciudad magica", "d78bfa51-6b18-4629-a0e6-396890617273");
+
+INSERT INTO USERS(
+    ID,
+    NAME,
+    NICKNAME,
+    EMAIL,
+    PASSWORD
+) VALUES (
+     "32710096-ac79-4cbb-913e-3cdbbd969519",
+     "LALI ESPOSITO",
+     "bands@lali-esposito.play.add",
+     "ARG@lali-esposito",
+     "play@lali-esposito"
+);
+-- SQLBook: Markup
