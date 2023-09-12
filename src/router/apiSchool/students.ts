@@ -1,5 +1,5 @@
-import express,  { Router } from "express";
-import * as  studentsController from './../controllers/studentsController'
+/*import express,  { Router } from "express";
+import * as  studentsController from '../controllers/studentsController'
 
 
 const router = express.Router()
@@ -10,4 +10,4 @@ router.get('/', studentsController.getAllstudents)
 //router.get('/:id', studentsController.getUserById)
 //router.delete("/:id", studentsController.destroyUser)
 
-export default router
+export default router*/

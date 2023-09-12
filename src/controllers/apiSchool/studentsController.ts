@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { db } from "../models/knexDB"
+import { db } from "../../models/knexDB"
 import {v4 as uuidv4} from 'uuid';
-import { createId } from "../helpers/createId";
+import { createId } from "../../helpers/createId";
 
 export const getAllStudents =( async (req: Request, res: Response) => {
     try {
@@ -71,23 +71,16 @@ export const getUserById = ( async (req: Request, res: Response) => {
 )
 
 
-
-
-
-export const createUser = ( async (req: Request, res: Response) => {
+/*xport const createUser = ( async (req: Request, res: Response) => {
 
     try {
-        const newId = req.body.cpfCnpj as string | undefined
-        const name = req.body.registerName as string | undefined
-        const nickname = req.body.nickname as string
-        const email = req.body.email
-        const password = req.body.passwordConfirm
+        const CpfCnpj = req.body.inputputName as string | undefined
+        const nickname = req.body.inputNickname as string
+        const email = req.body.inputEmail
+        const password = req.body.inputPassword
 
         
-        if(newId === undefined){
-            res.status(400)
-            throw new Error("400 : 'cpf' ou 'cnpj' deve ser informado em cadastro")
-        }
+
      
         const [userExists] = await db.raw(`SELECT id FROM users WHERE id="${newId}"`)
         if(userExists){
@@ -114,16 +107,14 @@ export const createUser = ( async (req: Request, res: Response) => {
 			throw new Error("'password ' deve ser uma string")
 		}
 	
-		// o método de string .match() verifica se existe o padrão,
-		// caso exista ele retorna um array com os valores encontrados
-		// caso não exista ele retorna null (por isso o !)
+	
 		if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
 			throw new Error("'password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial")
 		}
 
 
         const newAuthor: {id:string, name: string, nickname: string, email: string, password: string } = {
-            id:newId,
+            id:cpfCnpj,
             name,
             nickname,
             email,
@@ -244,4 +235,4 @@ export const destroyUser = ( async (req: Request, res: Response) => {
             res.send("Erro inesperado")
         }
     }
-}) 
+}) */

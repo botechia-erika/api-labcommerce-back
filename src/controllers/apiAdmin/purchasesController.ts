@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { db } from "../models/knexDB";
+import { db } from "../../models/knexDB";
 
 
 // enpoints para purchases

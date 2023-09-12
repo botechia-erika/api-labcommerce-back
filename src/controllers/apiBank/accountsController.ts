@@ -1,13 +1,13 @@
 import { Request, Response } from "express"
 import {v4 as uuidv4} from 'uuid';
-import { accounts } from "../dataTS/accounts";
-import { ACCOUNT_TYPE, TAccount } from "../types/types";
-import { createId } from "../helpers/createId";
-import fs from 'fs'
+import { accounts } from "../../dataTS/accounts";
+import { ACCOUNT_TYPE, TAccount } from '../../types/types';
+import { createId } from "../../helpers/createId";
+/* import fs from 'fs'
 import path from 'path'
 const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
-const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8'))
-import { db } from "../models/knexDB";
+const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
+import { db } from "../../models/knexDB";
 
 export const getAllAcounts = ( async (req: Request, res: Response) => {
     try {
@@ -20,7 +20,7 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
             res.status(200).json( result )
         }else {
             
-        const result = await db.raw(`SELECT * FROM accounts WHERE name LIKE %${q}%`)
+        const [result] = await db.raw(`SELECT * FROM accounts WHERE owner LIKE '%${q}%'`)
         if(!result){
             res.status(404)
             throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
@@ -45,14 +45,14 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
 export const getAccountById = (async (req: Request, res: Response) => {
     try{
 
-    const id = req.params.id as string
+    const idSelect = req.params.id as string
    
-    if(id[0] !== "a"){
+    if(idSelect[0] !== "a"){
         res.status(400)
         throw new Error("'id' deve começar com letra 'a'")
     }
+    const [result] = await db.raw(`SELECT * FROM accounts WHERE id = '${idSelect}'`)
 
-    const result = accounts.find((account)=>account.id === id)
 
     if(!result){
         // res.statusCode = 404 tbm funciona
@@ -73,16 +73,16 @@ export const getAccountById = (async (req: Request, res: Response) => {
     }
 }
 })
-
+/*
 export const createAccount =( async (req: Request, res: Response) => {
   
 
     try {
  
-        const newId = req.body.idb as string ||undefined
-        const newOwner = req.body.ownerName as string 
-        const newBalance = req.body.balance as number 
-        const newType = req.body.type as   ACCOUNT_TYPE.BLACK|ACCOUNT_TYPE.BRONZE | ACCOUNT_TYPE.GOLD | ACCOUNT_TYPE.PLATINUM|ACCOUNT_TYPE.SILVER
+        const newId = req.body.inputId as string ||undefined
+        const newOwner = req.body.inputName as string 
+        const newBalance = req.body.inputBalance as number 
+        const newType = req.body.inputType                  as   ACCOUNT_TYPE.BLACK|ACCOUNT_TYPE.BRONZE | ACCOUNT_TYPE.GOLD | ACCOUNT_TYPE.PLATINUM|ACCOUNT_TYPE.SILVER
 
         
       const idAccount =  accountsDATA.length+1
@@ -227,3 +227,4 @@ try{
         }
     }   
 })
+**/

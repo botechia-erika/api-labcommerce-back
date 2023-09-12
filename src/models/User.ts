@@ -26,15 +26,20 @@ export class User{
     private nickname: string;
     private email : string;
     private password :string;
-    private role: ROLES 
-
-    constructor(id:string, name: string, nickname:string, password:string, role:ROLES){
+    private createdAt: string;
+    private avatar: string;
+    private role: string
+    constructor(id:string, name: string, nickname:string, password:string, email:string, createdAt: string, avatar:string, role:string){
         this.id = id;
         this.name = name ;
         this.nickname=nickname;
         this.password = password;
-        this.role = ROLES.AUTHOR || ROLES.NORMAL ||ROLES.BUYER|| ROLES.EMPLOYER||ROLES.OWNER||ROLES.STUDENT|| ROLES.INSTRUCTOR
-       }
+        this.email = email;
+        this.avatar = avatar;
+        this.role = role  
+        this.createdAt = createdAt;
+        
+     }
 
        // metodos get e setter
 
@@ -72,20 +77,42 @@ export class User{
             this.email = newEmail
        }
 
-       public getRole():string{
-        return this.role
-       }
-
-       public setRole (newRole:ROLES ){
-            this.role = newRole
-       }
        public getPassword():string{
         return this.password
        }
 
-       public setPassword (newPassword:ROLES ){
-            this.role = newPassword
+       public setPassword (newPassword:string ):void{
+            this.password = newPassword
        }
+
+         public getAvatar ():string{
+          return this.avatar
+         }
+
+      public setAvatar(value:string):void{
+          this.avatar= value
+      }   
+
+      public getRole():string{
+          return this.role
+         }
+  
+         public setRole (value:string ):void{
+              this.role = value
+         }
+         public getCreatedAt():string{
+          return this.createdAt
+         }
+  
+         public setCreatedAt (newCreatedAt:string ){
+              this.createdAt = newCreatedAt
+         }
+
+
+
+
+
+
       /*  public validatePassword (inputPassword: string){
         if(inputPassword === this.getPassword() ){
             return true 

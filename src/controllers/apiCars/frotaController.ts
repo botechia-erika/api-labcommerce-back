@@ -1,74 +1,58 @@
 import { Request, Response } from "express";
-import { db } from "./../models/knexDB";
-import { DESCRIPTION_CATEGORY, TProductDB } from '../types/types';
-import { createId } from "../helpers/createId";
-import { matchDescriptionCategory } from "../helpers/matchDescriptionCategory";
+import { db } from "../../models/knexDB";
+import { DESCRIPTION_CATEGORY, TProductDB } from '../../types/types';
+import { createId } from "../../helpers/createId";
+import { matchDescriptionCategory } from "../../helpers/matchDescriptionCategory";
 
-export const createBand = ( async (req: Request, res: Response) => {
+export const createCar = ( async (req: Request, res: Response) => {
 
-    try {
-        let newBand = undefined
-        const newId = createId(newBand)
-        const bandName = req.body.name as string || undefined
-        const nickname = req.body.bandNickname as string | undefined
-        const email = req.body.bandEmail as string | undefined
-        const passwordConfirm = req.body.passwordConfirm as string | undefined
-        const countryCode = req.body.countryCode as string 
+    try{
+        const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano as string
+        const newPlaca = req.body.placa as string | undefined  
+        const newImage = req.body.image_url as string | undefined
+        const newPrice = req.body.price as number
+        //const newDescription = req.body.description as string 
 
-       const withoutSpace = bandName.replace(' ', '-')
-
-        const createBandAccess = (email:undefined|string, withoutSpace:string)=>{
-            if(email !== undefined){
-                res.status(400)
-                throw new Error("email gerado como acesso a banda deve ser gerado de forma automatic")
-            }else if(!bandName){
-                res.status(400)
-                throw new Error("nome da banda deve ser informado para cadastro")
-            }else{
-            const emailGerado = "bands@" + withoutSpace + ".play.add"
-            return emailGerado
-            }
-         }
-
-        
-        const createBandNickname = (countryCode:string,  withoutSpace:string)=>{
-            const nicknameGerado = (countryCode + "@" + withoutSpace )
-            return nicknameGerado
-            }
-         
-
-		
-		if (passwordConfirm && passwordConfirm!= undefined) {
-			throw new Error("'password' de acceso deve ser gerado automaticamente")
-		}
-
-        const createBandPassword = (passwordConfirm:string | undefined , withoutSpace:string)=>{
-		if (!passwordConfirm && passwordConfirm!= undefined) {
-			throw new Error("'password' de acceso deve ser gerado automaticamente")
-		}else{
-            const createPasswordBand = ("play@" + withoutSpace)
-            return createPasswordBand
+       
+        if (typeof newName != typeof "string" ) {
+            res.status(400)
+            throw new Error ('400 nome do deve seguir o formato "MODELO MARCA ANO" ')
         }
-    }
-     
 
-        const createBand: {id:string, name: string, nickname: string, email: string, password: string } = {
-            id:createId(newBand),
-            name: bandName,
-            nickname: createBandNickname(countryCode, withoutSpace),
-            email: createBandAccess(email, withoutSpace),
-            password:createBandPassword(passwordConfirm , withoutSpace)
+        if( typeof newPlaca !== typeof "string"){
+            res.status(400)
+            throw new Error ("400: placa deve ser alfa numerica")
         }
-        await db("users").insert(createBand)
 
-         const createBandAccount :{id: string, name: string } ={
-            id: createBand.id,
-            name: createBand.name
-         }
+        if (newPlaca && !newPlaca.match(/[A-Z]{3}[-][0-9]{4}/g)) {
+                res.status(400)
+                throw new Error ("400: placa deve seguir o padrão AAA-0000")
+        }
 
-         await db("bands").insert(createBandAccount)
+        if (!newImage.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)){
+            res.status(400)
+            throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
+        }
+   
+       /* const  [idDBExists]  = await db.raw(`SELECT * FROM products WHERE id="${newPlaca}"`)
 
-        res.status(201).json({message: "banda cadastrada com sucesso"})
+        if (idDBExists !== undefined) {
+            res.status(400)
+            throw new Error("'placa' já cadastrada")
+        } */
+
+   
+
+        const newProduct: { description: string, id: string, name: string,image_url: string, price: number}= {
+            id:createId(newPlaca),
+            name:newName,
+            image_url:newImage,
+            description:matchDescriptionCategory(newPrice),
+            price:newPrice
+        }
+            await db("products").insert(newProduct)
+    
+        res.status(201).send("produto cadastrado com sucesso")
     } catch (error) {
         console.log(error)
 
@@ -85,14 +69,13 @@ export const createBand = ( async (req: Request, res: Response) => {
 })
 
 
-
-export const getAllBands=( async (req: Request, res: Response) => {
+export const getAllCars =( async (req: Request, res: Response) => {
     try {
        const searchTerm = req.query.q as string | undefined
         if(searchTerm === undefined){
-        const message = "LISTA DE BANDAS E ARTISTAS CADASTRADOS DO SISTEMA"
-        const result = await db.raw(`select * from bands`)
-        res.status(200).json({ message, result: result})
+        const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
+        const result = await db.raw(`SELECT * FROM products WHERE description LIKE "Light" OR description LIKE "Hatch" OR description LIKE "Sedan" OR description LIKE "Prime" OR description LIKE "Lux"`)
+        res.status(200).send({ message, result})
     }else{
         const searchTerm = req.query.q as string | undefined
 
@@ -102,12 +85,15 @@ export const getAllBands=( async (req: Request, res: Response) => {
             throw new Error('Pesquisa deve ter ao menos 1 caracter')
         }
 
-       const [result] =await db("bands").where("name", "LIKE" , `%${searchTerm}%`)
+       const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
         if(!result){
             res.status(404)
             throw new Error("404: NOME do Produto NÃO Encontrado")     
         }
-        res.status(200).send({result : result, message: "PRODUTO ENCONTRADO"})
+
+        
+
+        res.status(200).send({result : [result], message: "PRODUTO ENCONTRADO"})
     }
 }
     catch (error) {
@@ -126,7 +112,7 @@ export const getAllBands=( async (req: Request, res: Response) => {
 });
 
 
-/*export const editProductById = (async (req: Request, res: Response) => {
+export const editProductById = (async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const nameSelect = req.body.name as undefined  | string
@@ -189,10 +175,11 @@ export const getAllBands=( async (req: Request, res: Response) => {
 });
 
 export const getProductById =( async (req: Request, res: Response) => {
-    const id = req.params.id as string | []
+
 
     try {
-        const result = await db.raw(`SELECT * FROM products WHERE id=${id}`)
+        const id = req.params.idDetails
+        const result = await db.raw(`SELECT * FROM products WHERE id="${id}"`)
 
         if (!result) {
             res.status(404)
@@ -244,4 +231,4 @@ export const destroyProduct = ( async (req: Request, res: Response) => {
             res.send("Erro inesperado")
         }
     }
-})*/
+})

@@ -1,22 +1,51 @@
 import { Request, Response } from "express"
-import { db } from "../models/knexDB"
+import { db } from "../../models/knexDB"
 import {v4 as uuidv4} from 'uuid';
-import { createId } from "../helpers/createId";
+import { createId } from "../../helpers/createId";
+import { TUserDB, TUser } from "../../types/types";
 
+import { User } from "../../models/User";
 export const getAllUsers =( async (req: Request, res: Response) => {
     try {
        const searchTerm = req.query.q as string | undefined
         if(searchTerm === undefined){
         const message = "LISTA DE USERS CADASTRADO DO SISTEMA"
-        const result = await db("users")
-        res.status(200).json(result)
+        const result:TUserDB[] = await db("users")
+        const usersDB = result
+        const users:User[] = usersDB.map((userDB)=>
+            new User(
+                userDB.id,
+                userDB.name,
+                userDB.nickname,
+                userDB.password,
+                userDB.email,
+                userDB.created_at,
+                userDB.avatar_img,
+                userDB.role
+               )
+            )
+        res.status(200).json(users)
     }else{
     
-       const [result] =await db("users").where("name", "LIKE" , `%${searchTerm}%`)
-        if(![result]|| result == null){
+       const result:TUserDB[] =await db("users").where("name", "LIKE" , `%${searchTerm}%`)
+        if(!result|| result == null){
             res.status(404).json({message: "USER NÃO ENCONTRADO"})     
         }else{
-        res.status(200).json({result ,  message: "USER ENCONTRADO"})
+        const usersDB = result
+        // criar array de users para instanciar em class User um novo objeto seguro que não toca na db 
+        const users:User[] = usersDB.map((userDB)=>
+            new User(
+                userDB.id,
+                userDB.name,
+                userDB.nickname,
+                userDB.password,
+                userDB.email,
+                userDB.created_at,
+                userDB.avatar_img,
+                userDB.role
+            ) 
+            )
+        res.status(200).json({ message: "Resultado para termo buscado", users})
     }
 }}
     catch (error) {
@@ -36,24 +65,16 @@ export const getAllUsers =( async (req: Request, res: Response) => {
 
 
 export const getUserById = ( async (req: Request, res: Response) => {
-    const id = req.params.id as string | undefined
-
     try {
-        if (id==="" || id === undefined) {
-     
-            res.json({ message: "ID DE USUARIO DEVE SER INFORMADO PARA BUSCA" })
+        const searchId = req.params.id
+        const idExists = db.raw(`SELECT * FROM users WHERE id=${searchId}`) 
+        if(!idExists || idExists === undefined){
+            res.status(404)
+            throw new Error ("'404': User não encontrado")
+        } else{
+           const result = [idExists]
+                res.status(200).json({ message: "USUARIO ENCONTRADO" , result })
         }
-        else{
-            const [result] = await db.raw(`SELECT * FROM users WHERE id="${id}"`)
-
-            if(result && result != undefined) { 
-                res.status(200).json({ message: "USUARIO ENCONTRADO" , result: result })
-               
-        }
-        else {
-            res.status(404).json({message: "USER não encontrado"})
-        }
-    }
     } catch (error) {
         console.log(error)
 
@@ -75,31 +96,32 @@ export const getUserById = ( async (req: Request, res: Response) => {
 
 
 export const createUser = ( async (req: Request, res: Response) => {
-
     try {
-        const newId = req.body.cpfCnpj as string | undefined
-        const name = req.body.registerName as string | undefined
-        const nickname = req.body.nickname as string
-        const email = req.body.email
-        const password = req.body.passwordConfirm
-
+        const cpfCnpj = req.body.inputCpfCnpj as string
+        const name = req.body.inputName as string | undefined
+        const nickname = req.body.inputNickname as string|undefined
+        const email = req.body.inputEmail as string | undefined
+        const password = req.body.inputPassword as string | undefined
+        const role = req.body.inputRole as string | undefined
+        const avatar = req.body.inputAvatar as string | undefined
         
-        if(newId === undefined){
-            res.status(400)
-            throw new Error("400 : 'cpf' ou 'cnpj' deve ser informado em cadastro")
-        }
-     
-        const [userExists] = await db.raw(`SELECT id FROM users WHERE id="${newId}"`)
+        const today = Date.now()
+
+        const [userExists] = await db.raw(`SELECT id FROM users WHERE id="${cpfCnpj}"`)
         if(userExists){
             res.status(400)
             throw new Error("id já esta em uso")
         }
-        const [emailExists] = await db.raw(`SELECT email FROM users WHERE id="${newId}"`)
+        const [emailExists] = await db.raw(`SELECT email FROM users WHERE id="${cpfCnpj}"`)
         if(emailExists){
             res.status(400)
             throw new Error("id já esta em uso")
         }
-
+        const [nicknameExists] = await db.raw(`SELECT nickname FROM users WHERE id="${cpfCnpj}"`)
+        if(nicknameExists){
+            res.status(400)
+            throw new Error("id já esta em uso")
+        }
         if (typeof name !== "string") {
             res.status(400).send({ message: 'nome invalido' })
         }
@@ -113,23 +135,32 @@ export const createUser = ( async (req: Request, res: Response) => {
         if (typeof password !== "string") {
 			throw new Error("'password ' deve ser uma string")
 		}
-	
 		// o método de string .match() verifica se existe o padrão,
 		// caso exista ele retorna um array com os valores encontrados
 		// caso não exista ele retorna null (por isso o !)
 		if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
 			throw new Error("'password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial")
 		}
-
-
-        const newAuthor: {id:string, name: string, nickname: string, email: string, password: string } = {
-            id:newId,
+        const newUser:User = new User (
+            cpfCnpj,
             name,
             nickname,
             email,
-            password
-        }
-        await db("users").insert(newAuthor)
+            password,
+            today.toString(),
+            avatar,
+            role
+        )
+/*         const user : User[] = new User(
+            newUser.id,
+            newUser.name,
+            newUser.nickname,
+            newUser.password,
+            newUser.email, 
+            today
+        )*/
+        await db.raw(`INSERT INTO users (id, name, nickname, email , password, created_at , avatar_img , role)
+        VALUES ("${cpfCnpj}", "${name}", "${nickname}", "${email}", "${password}" , "${today}", "${avatar}", "${role}")`)
         res.status(201).json({message: "usuario cadastrado com sucesso"})
     } catch (error) {
         console.log(error)
@@ -148,60 +179,64 @@ export const createUser = ( async (req: Request, res: Response) => {
 
 export const editUserById = (async (req: Request, res: Response) => {
     try {
-        const id = req.params.id
-        const newName = req.body.name as string | undefined
-        const newNickname = req.body.nickname as string | undefined
-        const newEmail  = req.body.email as string | undefined
-        const newPassword = req.body.password as string | undefined
+        const cpfCnpj = req.body.inputCpfCnpj as string
+        const name = req.body.inputName as string | undefined
+        const nickname = req.body.inputNickname as string|undefined
+        const email = req.body.inputEmail as string | undefined
+        const password = req.body.inputPasswordConfirm as string | undefined
+        const role = req.body.inputRole as string | undefined
+        const avatar = req.body.inputAvatar as string | undefined
 
-        if (newName) {
-            if (typeof newName !== "string") {
+        if (name) {
+            if (typeof name !== "string") {
                 res.status(400);
                 throw new Error("Nome do produto deve ser do tipo string");
             }
         }
 
-        if (newNickname) {
-            if (typeof newNickname !== "string") {
+        if (nickname) {
+            if (typeof nickname !== "string") {
                 res.status(400);
                 throw new Error("Descrição deve ser do tipo string");
             }
         }
 
-        if (newEmail) {
-            if (typeof newEmail !== "string") {
+        if (email) {
+            if (typeof email !== "string") {
                 res.status(400);
                 throw new Error("Novo email deve ser de tipo string");
             }
         }
 
-        if(newPassword){
-        if (typeof newPassword == "string") {
+        if(password){
+        if (typeof password == "string") {
 			throw new Error("'new password ' deve ser uma string")
 		}
         }
-        if(newPassword){
+        if(password){
 		// o método de string .match() verifica se existe o padrão,
 		// caso exista ele retorna um array com os valores encontrados
 		// caso não exista ele retorna null (por isso o !)
-		if (!newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
+		if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g)) {
 			throw new Error("'new password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial")
 		}
 
     }
-        const [user4edit] = await db.raw(`SELECT * FROM users WHERE users.id=${id}`);
+        const [user4edit] = await db.raw(`SELECT * FROM users WHERE users.id=${cpfCnpj}`);
         if ([user4edit]) {
-            user4edit.id = id,
-            user4edit.name = newName || user4edit.name,
-            user4edit.nickname = newNickname || user4edit.nickname,
-            user4edit.email = newEmail || user4edit.email,
-            user4edit.password= newPassword || user4edit.password,
-        
+            user4edit.id = user4edit.id,
+            user4edit.name = name || user4edit.name,
+            user4edit.nickname = nickname || user4edit.nickname,
+            user4edit.email = email || user4edit.email,
+            user4edit.password= password || user4edit.password,
+             user4edit.role = role || user4edit.role,
+            user4edit.avatar_img=avatar||user4edit.avatar
+        }
     
-                await db("users").update(user4edit).where({id :`${id}`})
+                await db("users").update(user4edit).where({id :`${cpfCnpj}`})
 
                 res.status(201).send({message: "user atualizado com sucesso", result: user4edit})
-        }
+        
             } catch (error) {
                 console.log(error)
         
@@ -226,7 +261,7 @@ export const destroyUser = ( async (req: Request, res: Response) => {
 
         const [users] = await db("users").where({ id: idToDelete })
         if (!users) {
-            throw new Error("usuario  nao encontrado")
+            throw new Error("usuário  nao encontrado")
         }
         await db("users").delete().where({ id: idToDelete })
         res.status(200).json({ message: 'users deletado com sucesso' })

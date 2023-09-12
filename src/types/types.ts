@@ -171,15 +171,19 @@ export type TAccount = {
 export type TUserDB = {
   id: string,
   name: string,
+  nickname:string,
   email: string,
   password: string,
-  created_at: string
+  created_at:string,
+  avatar_img: string,
+  role: string
 }
 
 // tipagem para criação (POST) sem created_at
-export type TUserDBPost = {
+export type TUserPost = {
   id: string,
   name: string,
+  nickname: string,
   email: string,
   password: string
 }
@@ -300,4 +304,20 @@ export enum DESCRIPTION_CATEGORY {
   SEDAN="Sedan",
   PRIME="Prime",
   LUX="Lux"
+}
+
+
+export type TUser = {
+  id: string,
+  name: string,
+  nickname: string,
+  email: string,
+  password: string,
+  createdAt: string
+}
+
+export type TPhoneDB = {
+  id: string;
+  id_user: string;
+  phone_number: string;
 }

@@ -1,4 +1,4 @@
-import { TProductDB } from '../types/types';
+/*import { TProductDB } from '../types/types';
 export class Purchases{
     id: string,
     buyer: string,
@@ -28,4 +28,4 @@ export class ProductPurchased{
         public total_price: number,
         public createdAt :string
     ){}
-}
+}*/

@@ -3,7 +3,7 @@ import {TCarro} from './../types/types'
     {
       marca: 'Chevrolet',
       modelo: 'Onix',
-      ano: 2019
+      ano: 2019  
     }, {
       marca: 'Chevrolet',
       modelo: 'Celta',

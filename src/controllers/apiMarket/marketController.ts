@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
-import { db } from "../models/knexDB";
-import { DESCRIPTION_CATEGORY, TProductDB } from '../types/types';
-import { createId } from "../helpers/createId";
-import { matchDescriptionCategory } from "../helpers/matchDescriptionCategory";
+/*/import { Request, Response } from "express";
+import { db } from "../../models/knexDB";
+import { DESCRIPTION_CATEGORY, TProductDB } from '../../types/types';
+import { createId } from "../../helpers/createId";
+import { matchDescriptionCategory } from "../../helpers/matchDescriptionCategory";
 
-export const createProduct = ( async (req: Request, res: Response) => {
+export const createItem = ( async (req: Request, res: Response) => {
 
     try {
-        const newName = req.body.modelo + " " + req.body.marca + " " + req.body.ano as string
-        const newPlaca = req.body.placa as string | undefined  
+        const newItem = req.body.listItem
+        const newId = undefined as undefined | string
+        const itemId = createId(newId)
         const newImage = req.body.image_url as string | undefined
         const newPrice = req.body.price as number
         //const newDescription = req.body.description as string 
@@ -39,7 +40,7 @@ export const createProduct = ( async (req: Request, res: Response) => {
         if (idDBExists !== undefined) {
             res.status(400)
             throw new Error("'placa' já cadastrada")
-        } */
+        } 
 
    
 
@@ -75,7 +76,7 @@ export const getAllProducts=( async (req: Request, res: Response) => {
         if(searchTerm === undefined){
         const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
         const result = await db("products")
-        res.status(200).send({ message, result: result})
+        res.status(200).send({ message, result})
     }else{
         const searchTerm = req.query.q as string | undefined
 
@@ -227,4 +228,4 @@ export const destroyProduct = ( async (req: Request, res: Response) => {
             res.send("Erro inesperado")
         }
     }
-})
+})*/

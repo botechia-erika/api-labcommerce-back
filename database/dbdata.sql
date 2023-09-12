@@ -1,5 +1,18 @@
 -- SQLBook: Code
--- Active: 1693518175331@@127.0.0.1@3306
+-- Active: 1694493376556@@127.0.0.1@3306
+-- SQLBook: Markup
+
+-- SQLBook: Markup
+
+-- SQLBook: Code
+
+-- SQLBook: Markup
+
+-- SQLBook: Code
+
+-- SQLBook: Code
+-- Active: 1694324177461@@127.0.0.1@3306
+
 
 
 CREATE TABLE USERS (
@@ -563,45 +576,48 @@ CREATE TABLE purchases_products (
 )
 
 SELECT * FROM purchases_products;
-
-DROP TABLE bands;
-DROP TABLE songs;
--- Tabelas já foram criadas
 CREATE TABLE bands (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL
 );
-INSERT INTO bands (
-     id, name
-)
-VALUES
-("d78bfa51-6b18-4629-a0e6-396890617273", "TAN BIONICA");
+
 CREATE TABLE songs (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     band_id TEXT NOT NULL,
     FOREIGN KEY (band_id) REFERENCES bands (id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
-
-SELECT * FROM bands;
-INSERT INTO songs (
-     id, name, band_id
-)
+DROP TABLE SONGS;
+DROP TABLE BANDS;
+-- Bandas já foram inseridas
+INSERT INTO bands (id, name)
 VALUES
-("/watch?v=V419yO6FeIU", "ciudad magica", "d78bfa51-6b18-4629-a0e6-396890617273");
+    ('b001', 'Evanescence'),
+    ('b002', 'LS Jack'),
+    ('b003', 'Blink-182');
+SELECT * FROM bands;
+-- Músicas já foram inseridas
+INSERT INTO songs (id, name, band_id)
+VALUES
+    ('s001', 'Bring me to life', 'b001'),
+    ('s002', 'Carla', 'b002'),
+    ('s003', 'Uma carta', 'b002'),
+    ('s004', 'All the small things', 'b003'),
+    ('s005', 'I miss you', 'b003');
 
-INSERT INTO USERS(
-    ID,
-    NAME,
-    NICKNAME,
-    EMAIL,
-    PASSWORD
-) VALUES (
-     "32710096-ac79-4cbb-913e-3cdbbd969519",
-     "LALI ESPOSITO",
-     "bands@lali-esposito.play.add",
-     "ARG@lali-esposito",
-     "play@lali-esposito"
-);
+SELECT * FROM songs;
+
+-- CONSULTA PARA BANDAS E "USERS" COM INFO DETAIL DE BANDS EM CONSULTA UNICA 
+       SELECT * FROM bands 
+       INNER JOIN users
+       ON bands.id = users.id
+       WHERE bands.name LIKE "TAN BIONICA";
+
+ALTER TABLE users ADD COLUMN avatar_img TEXT NOT NULL DEFAULT "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp";
+ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT "Normal";
+
+SELECT * FROM users
 -- SQLBook: Markup
