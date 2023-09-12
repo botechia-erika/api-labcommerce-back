@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "../../models/knexDB";
+import { createId } from "../../helpers/createId";
 
 
 // enpoints para purchases
-export const getAllPurchases = ( async (req: Request, res: Response) => {
+/*export const getAllPurchases = ( async (req: Request, res: Response) => {
    
     try {
         const result = await db.raw(`select * from purchases`)
@@ -63,41 +64,19 @@ export const getPurchaseById = ( async (req: Request, res: Response) => {
             res.send("Erro inesperado")
         }
     }
-})
+})*/
 
 export const createPurchase = ( async (req: Request, res: Response) => {
-
             try {
-                const product_id=req.body.product_id 
-                const total_price=req.body.total_price 
-                const quantity = req.body.quantity 
-                const buyer_id = req.body.buyer_id 
-            
-                      
-                if(typeof total_price !==   "number"){
-                    throw new Error("preço total deve ser valor numerico valido")
-                  }
-            
-                        
-                if(typeof buyer_id !== "string"){
-                    throw new Error("quantidade de items deve ser valor numerico valida")
-                  }
-
-                  if( typeof quantity !== "number"){
-                    throw new Error("quantidade de items deve ser valor numerico valida")
-                  }
                 
-                  const newId = `${Date.now()}`.toString()
-                  const newPurchase:{id:string, product_id:string, total_price:number, quantity:number , buyer_id:string }={
-                  id:newId,
-                product_id,
-                total_price,
-                 quantity,
-                buyer_id
-                  }
-                  await db("purchases").insert(newPurchase)
-
-                res.send(200).json({message: "cadastro realizado com sucesso" , newPurchase})
+                const purchaseId = req.body.inputId   as string | undefined
+                const quantity = req.body.inputQuantity as number | undefined 
+                const buyerEmail = req.body.inputBuyerEmail as string | undefined
+                const finalPrice = req.body.inputPrice as number | undefined
+                const paid = 0
+                const createdAt = new Date().toISOString()
+               
+                res.send(200).json({message: "cadastro realizado com sucesso" })
                 } catch (error) {
             console.log(error)
     
@@ -112,7 +91,7 @@ export const createPurchase = ( async (req: Request, res: Response) => {
             }
         }
 });
-
+/* 
 
 export const destroyPurchase = ( async (req: Request, res: Response) => {
 
@@ -141,4 +120,4 @@ export const destroyPurchase = ( async (req: Request, res: Response) => {
                 res.send("Erro inesperado")
             }
         }
-    })
+    })*/

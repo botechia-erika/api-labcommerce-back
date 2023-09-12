@@ -1,23 +1,29 @@
 
-const port = process.env.PORT || 3003
+process.env.NODE_ENV =process.env.NODE_ENV || "development"
+process.env.APP_ENV =process.env.APP_ENV || "development"
+import dotenv from 'dotenv'
 
+
+dotenv.config({
+path: `${__dirname}/../config/${process.env.APP_ENV}`
+})
+
+console.log(process.env.APP_FOO)
 import express from 'express';
 import { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser  from 'body-parser';
 import { db } from './models/knexDB'
 
-import { arrayPersonRole} from './types/types';
 import bandsRouter from './router/apiMusic/bands'
 import frotaRouter from './router/apiCars/frota'
 import songsRouter from './router/apiMusic/songs'
-import  accountsRouter from './router/apiBank/accounts';
+import accountsRouter from './router/apiBank/accounts';
 import usersRouter from './router/apiUsers/users'
-
+import purchasesRouter from './router/apiAdmin/purchases'
 import phonesRouter from './router/apiAdmin/phones'
 
 //import purchasesRouter from './router/purchases'
-console.log(arrayPersonRole)
 const app = express()
 import { ROLES } from './models/User';
 //import { Purchases, ProductPurchased } from './models/Purchases';

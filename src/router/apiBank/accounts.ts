@@ -3,11 +3,10 @@ import * as accountsController from '../../controllers/apiBank/accountsControlle
 
 const router = express.Router()
 
-router.get('/', accountsController.getAllAcounts)
-//router.post('/', accountsController.createAccount)
-router.get('/:id' , accountsController.getAccountById)
-/* router.delete('/:id' , accountsController.destroyAccount)
-router.put('/:id' , accountsController.editAccount)
- */
+router.get('/', accountsController.getAllAccounts)
+router.get('/:id/balance', accountsController.getAccountBalance)
+router.post('/' , accountsController.createAccount)
+
+router.put('/:id/balance' , accountsController.editAccountBalance)
 
 export default router;
