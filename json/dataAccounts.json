@@ -1,0 +1,32 @@
+[
+    {
+        "id": "a001",
+        "ownerName": "Ciclano",
+        "balance": 10000,
+        "type": "Gold"
+    },
+    {
+        "id": "a002",
+        "ownerName": "Astrodev",
+        "balance": 500000,
+        "type": "Black"
+    },
+    {
+        "id": "a003",
+        "ownerName": "Fulana",
+        "balance": 20000,
+        "type": "Platinum"
+    },
+    {
+        "id": "a003",
+        "ownerName": "wilsom",
+        "balance": 10500,
+        "type": "Ouro"
+    },
+    {
+        "id": "a0058801bd24-3ce0-42fc-9fd6-be112afdfc35",
+        "ownerName": "Melissa",
+        "balance": 10900,
+        "type": "Ouro"
+    }
+]
