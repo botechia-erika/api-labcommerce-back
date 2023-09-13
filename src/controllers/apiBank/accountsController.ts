@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import {v4 as uuidv4} from 'uuid';
+import { Account } from "../../models/Accounts";
 import { accounts } from "../../dataTS/accounts";
-import { ACCOUNT_TYPE, TAccount } from '../../types/types';
+import { ACCOUNT_TYPE, TAccountDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
 /* import fs from 'fs'
 import path from 'path'
@@ -9,24 +9,54 @@ const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
 import { db } from "../../models/knexDB";
 
-export const getAllAcounts = ( async (req: Request, res: Response) => {
+export const getAllAccounts = (async (req: Request, res: Response) => {
     try {
-        const q = req.query.q as string | undefined  
+        const accountsDB: TAccountDB[] = await db("accounts")
 
-        
-        if (q === undefined) {
-            const result = await db.raw(`select * from accounts`)   
+        const accounts = accountsDB.map((accountDB) => new Account(
+            accountDB.id,
+            accountDB.balance,
+            accountDB.owner_id,
+            accountDB.created_at
+        ))
 
-            res.status(200).json( result )
-        }else {
-            
-        const [result] = await db.raw(`SELECT * FROM accounts WHERE owner LIKE '%${q}%'`)
-        if(!result){
+        res.status(200).send(accounts)
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+
+export const getAccountBalance = (async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id
+
+        const [ accountDB ]: TAccountDB[] | undefined[] = await db("accounts").where({ id })
+
+        if (!accountDB) {
             res.status(404)
-            throw new Error("404 owner NÃO encontrado, insira um nome cadastrado")  
+            throw new Error("'id' não encontrado")
         }
-    res.status(200).json({ message: "'NOME' do ownwer encontrado no nosso sistema" , result})
-    }
+
+        const account = new Account(
+            accountDB.id,
+            accountDB.balance,
+            accountDB.owner_id,
+            accountDB.created_at
+        )
+
+        const balance = account.getBalance()
+
+        res.status(200).send({ balance })
     } catch (error) {
         console.log(error)
 
@@ -42,83 +72,45 @@ export const getAllAcounts = ( async (req: Request, res: Response) => {
     }
 })
 
-export const getAccountById = (async (req: Request, res: Response) => {
-    try{
 
-    const idSelect = req.params.id as string
-   
-    if(idSelect[0] !== "a"){
-        res.status(400)
-        throw new Error("'id' deve começar com letra 'a'")
-    }
-    const [result] = await db.raw(`SELECT * FROM accounts WHERE id = '${idSelect}'`)
-
-
-    if(!result){
-        // res.statusCode = 404 tbm funciona
-        res.status(404)
-        throw new Error( "404: conta NÃO encontrada, verifique o Id")  
-    }
-
-        res.status(200).json({ message: "conta encontrado no nosso sistema" , result})
-    }catch (error) {
-        console.log(error)
-        if (req.statusCode === 200) {
-        res.status(500)
-    }
-    if (error instanceof Error) {
-        res.send(error.message)
-    } else {
-        res.send("Erro inesperado")
-    }
-}
-})
-/*
-export const createAccount =( async (req: Request, res: Response) => {
-  
-
+export const createAccount = ( async (req: Request, res: Response) => {
     try {
- 
-        const newId = req.body.inputId as string ||undefined
-        const newOwner = req.body.inputName as string 
-        const newBalance = req.body.inputBalance as number 
-        const newType = req.body.inputType                  as   ACCOUNT_TYPE.BLACK|ACCOUNT_TYPE.BRONZE | ACCOUNT_TYPE.GOLD | ACCOUNT_TYPE.PLATINUM|ACCOUNT_TYPE.SILVER
+        const { id, ownerId } = req.body
 
-        
-      const idAccount =  accountsDATA.length+1
-
-      const defineIdAccount = (idAccount:number)=>{
-      if(idAccount < 10){
-        const id = "a00" + idAccount
-        return id
-      }else if(idAccount<100){
-        const id = "a0" + idAccount
-        return id
-      }else if(idAccount>100){
-        const id = "a" + idAccount
-      }
-    }
-      
-    if(newBalance < 0 ){
-        res.send(400)
-        throw new Error('transação invalida a conta não pode começar em negativo')
-    }
-
-        const newAccount:TAccount = {
-            id:defineIdAccount(idAccount) + createId(newId),
-            ownerName: newOwner,
-            balance: newBalance,
-            type: newType
-        }
-        if(newAccount['id'] !== "a"){
+        if (typeof id !== "string") {
             res.status(400)
-            throw new Error("'id' deve começar com letra 'a'")
+            throw new Error("'id' deve ser string")
         }
-    
-        accountsDATA.push(newAccount)
-        fs.writeFileSync(accountsFilePath, JSON.stringify(accountsDATA, null, 4), 'utf8');
 
-        res.status(201).json({ message: 'account agregado com sucesso', newAccount})
+        if (typeof ownerId !== "string") {
+            res.status(400)
+            throw new Error("'ownerId' deve ser string")
+        }
+
+        const [ accountDBExists ]: TAccountDB[] | undefined[] = await db("accounts").where({ id })
+
+        if (accountDBExists) {
+            res.status(400)
+            throw new Error("'id' já existe")
+        }
+
+        const newAccount = new Account(
+            id,
+            0,
+            ownerId,
+            new Date().toISOString()
+        )
+
+        const newAccountDB: TAccountDB = {
+            id: newAccount.getId(),
+            balance: newAccount.getBalance(),
+            owner_id: newAccount.getOwnerId(),
+            created_at: newAccount.getCreatedAt()
+        }
+
+        await db("accounts").insert(newAccountDB)
+
+        res.status(201).send(newAccount)
     } catch (error) {
         console.log(error)
 
@@ -133,44 +125,36 @@ export const createAccount =( async (req: Request, res: Response) => {
         }
     }
 })
-
-export const editAccount =( async (req: Request, res: Response) => {
-  
-
+export const editAccountBalance = ( async (req: Request, res: Response) => {
     try {
- 
-        const id = req.params.id as string 
-        const owner4Edit = req.body.ownerName as string  | undefined
-        const balance4Edit = req.body.balance as number | undefined
-        const type4Edit = req.body.type as   ACCOUNT_TYPE | undefined
+        const id = req.params.id
+        const value = req.body.value
 
-        if(id[0] !== "a"){
+        if (typeof value !== "number") {
             res.status(400)
-            throw new Error("'id' deve começar com letra 'a'")
-        }
-        if(owner4Edit.length < 1){
-            res.status(400)
-            throw new Error("nome do 'owner' deve ter ao menos 2 'caracteres'")
-        }
-        if(balance4Edit < 0){
-            res.status(400)
-            throw new Error("'balance' deve ser 0 ou positivo")
+            throw new Error("'value' deve ser number")
         }
 
-        const account4edit = accounts.find((account)=> account.id === id)
+        const [ accountDB ]: TAccountDB[] | undefined[] = await db("accounts").where({ id })
 
-        if(!account4edit){
+        if (!accountDB) {
             res.status(404)
-            throw new Error ( '404: account NÃO ENCONTRADA, VERIFICAR ID correto para Atualização')
+            throw new Error("'id' não encontrado")
         }
-    
-            account4edit.id = id
-            account4edit.ownerName = owner4Edit || account4edit.ownerName   
-            account4edit.balance = balance4Edit || account4edit.balance 
-            account4edit.type = type4Edit || account4edit.type     
-            res.status(200).json({ message: 'account atualizado com sucesso', account4edit})
-     
 
+        const account = new Account(
+            accountDB.id,
+            accountDB.balance,
+            accountDB.owner_id,
+            accountDB.created_at
+        )
+
+        const newBalance = account.getBalance() + value
+        account.setBalance(newBalance)
+
+        await db("accounts").update({ balance: newBalance }).where({ id })
+        
+        res.status(200).send(account)
     } catch (error) {
         console.log(error)
 
@@ -185,46 +169,3 @@ export const editAccount =( async (req: Request, res: Response) => {
         }
     }
 })
-export const destroyAccount = (async (req: Request, res: Response) => {
- 
-try{
-    const idToDelete = req.params.id
-
-    // importante regra de negocio economiza consulta a banco de dado
-    
-    if(idToDelete[0] !== "a"){
-        res.status(400)
-        throw new Error("'id' deve começar com letra 'a'")
-    }
-
-    // encontrar o index do item que será removido
-    const result = accountsDATA.findIndex((account:TAccount) => account.id === idToDelete)
-    
-    if(result===-1){
-        res.status(404)
-        throw new Error( "404: conta NÃO encontrada, verifique o Id")  
-    }
-    // caso o item exista, o index será maior ou igual a 0
-
-    if (result>=0) {
-    // remoção do item através de sua posição
-    accountsDATA.splice(result, 1)
-    }
-
-    res.status(200).send("'account' deletado com sucesso")
-
-    }catch (error) {
-         console.log(error)
-         
-         if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }   
-})
-**/

@@ -1,17 +1,6 @@
 -- SQLBook: Code
--- Active: 1694493376556@@127.0.0.1@3306
--- SQLBook: Markup
-
--- SQLBook: Markup
-
+-- Active: 1694521289305@@127.0.0.1@3306
 -- SQLBook: Code
-
--- SQLBook: Markup
-
--- SQLBook: Code
-
--- SQLBook: Code
--- Active: 1694324177461@@127.0.0.1@3306
 
 
 
@@ -619,5 +608,29 @@ SELECT * FROM songs;
 ALTER TABLE users ADD COLUMN avatar_img TEXT NOT NULL DEFAULT "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp";
 ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT "Normal";
 
-SELECT * FROM users
+SELECT * FROM users;
+
+SELECT * FROM purchases;
+
+SELECT * FROM products_purchases;
+
+drop table accounts;
+
+CREATE TABLE accounts (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    owner_id TEXT NOT NULL,
+    balance REAL DEFAULT (0) NOT NULL,
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES users (id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
+);
+
+INSERT INTO accounts (id, owner_id)
+VALUES
+	('a001', 'u001'),
+	('a002', 'u002');
+
+
+SELECT * FROM accounts;
 -- SQLBook: Markup
