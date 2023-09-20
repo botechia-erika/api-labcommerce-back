@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { db } from "../../models/BaseDatabase";
 import { createId } from "../../helpers/createId";
-
 
 // enpoints para purchases
 /*export const getAllPurchases = ( async (req: Request, res: Response) => {
@@ -66,31 +65,30 @@ export const getPurchaseById = ( async (req: Request, res: Response) => {
     }
 })*/
 
-export const createPurchase = ( async (req: Request, res: Response) => {
-            try {
-                
-                const purchaseId = req.body.inputId   as string | undefined
-                const quantity = req.body.inputQuantity as number | undefined 
-                const buyerEmail = req.body.inputBuyerEmail as string | undefined
-                const finalPrice = req.body.inputPrice as number | undefined
-                const paid = 0
-                const createdAt = new Date().toISOString()
-               
-                res.send(200).json({message: "cadastro realizado com sucesso" })
-                } catch (error) {
-            console.log(error)
-    
-            if (req.statusCode === 200) {
-                res.status(500)
-            }
-    
-            if (error instanceof Error) {
-                res.send(error.message)
-            } else {
-                res.send("Erro inesperado")
-            }
-        }
-});
+export const createPurchase = async (req: Request, res: Response) => {
+  try {
+    const purchaseId = req.body.inputId as string | undefined;
+    const quantity = req.body.inputQuantity as number | undefined;
+    const buyerEmail = req.body.inputBuyerEmail as string | undefined;
+    const finalPrice = req.body.inputPrice as number | undefined;
+    const paid = 0;
+    const createdAt = new Date().toISOString();
+
+    res.send(200).json({ message: "cadastro realizado com sucesso" });
+  } catch (error) {
+    console.log(error);
+
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
+  }
+};
 /* 
 
 export const destroyPurchase = ( async (req: Request, res: Response) => {

@@ -1,3 +1,7 @@
 {
-    "colorWheel.settings.workspaceColor": "hsl(351,77%,26%)"
+  "colorWheel.settings.workspaceColor": "hsl(351,77%,26%)",
+  "window.zoomLevel": 0.5,
+  "code-runner.executorMap": {
+    "typescript": " npx ts-node --files --transpile-only"
+  }
 }

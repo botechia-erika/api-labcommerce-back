@@ -1,5 +1,5 @@
 -- SQLBook: Code
--- Active: 1694521289305@@127.0.0.1@3306
+-- Active: 1693420646934@@127.0.0.1@3306
 -- SQLBook: Code
 
 
@@ -151,7 +151,7 @@ DROP TABLE books;
 SELECT * FROM books;
 
 
-
+SELECT * FROM courses;
 
 INSERT INTO books(
     id,

@@ -1,0 +1,18 @@
+{
+  "Snippets": [
+    {
+      "id": "s001",
+      "title": "LINGUAGEMS DE ALTO NIVEL",
+      "content": "SINTAXIS PROXIMA A LINGUAGEM HUMANA SENDO MAIS FACIL DE COMPREENDER",
+      "useCase": "JS, PHYTON, JAVA",
+      "TAG": ["GLOSSARIO", "CONCEITO", "TEORICO"]
+    },
+    {
+      "id": "s002",
+      "title": "LINGUAGEMS DE BAIXO NIVEL",
+      "content": "SINTAXIS PROXIMA A LINGUAGEM DA MAQUINA SENDO MAIS DIFICIL DE COMPREENDER",
+      "useCase": "ASSEMBLY , C",
+      "TAG": ["GLOSSARIO", "CONCEITO", "TEORICO"]
+    }
+  ]
+}

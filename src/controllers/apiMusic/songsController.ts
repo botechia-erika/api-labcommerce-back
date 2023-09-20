@@ -1,70 +1,72 @@
 import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { db } from "../../models/BaseDatabase";
 import { createId } from "../../helpers/createId";
 import { matchDescriptionCategory } from "../../helpers/matchDescriptionCategory";
 
+export const createSong = async (req: Request, res: Response) => {
+  try {
+    const newName = req.body.inputName as string | undefined;
+    const newId = (req.body.id as string) || undefined;
+    const bandId = req.body.inputBand as string | undefined;
+    const newImage = req.body.inputImage as string | undefined;
+    const newPrice = req.body.inputPrice as number | undefined;
+    const newDescription = req.body.inputDescription as string | undefined;
 
+    if (typeof newName !== "string") {
+      res.status(400);
+      throw new Error('400: O nome deve seguir o formato "MODELO MARCA ANO"');
+    }
 
-export const createSong = (async (req: Request, res: Response) => {
-    try {
-        const newName = req.body.inputName as string | undefined;
-        const newId = req.body.id as string || undefined
-        const bandId = req.body.inputBand as string | undefined
-        const newImage = req.body.inputImage as string | undefined;
-        const newPrice = req.body.inputPrice as number | undefined;
-        const newDescription = req.body.inputDescription as string | undefined;
+    if (
+      !newImage.match(
+        /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=([a-zA-Z0-9_]+)|youtu\.be\/([a-zA-Z\d_]+))(?:&.*)?$/
+      )
+    ) {
+      res.status(400);
+      throw new Error("400: A URL deve ser proveniente do YouTube e válida");
+    }
 
-        if (typeof newName !== 'string') {
-            res.status(400);
-            throw new Error('400: O nome deve seguir o formato "MODELO MARCA ANO"');
-        }
-
-        if (!newImage.match(/^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=([a-zA-Z0-9_]+)|youtu\.be\/([a-zA-Z\d_]+))(?:&.*)?$/)) {
-            res.status(400);
-            throw new Error('400: A URL deve ser proveniente do YouTube e válida');
-        }
-
-        const newSong: {id: string,  name: string} = {
-            id: createId(newId) ,
-            name: newName
-        };
-        console.log(newSong)
-        await db.raw(`
+    const newSong: { id: string; name: string } = {
+      id: createId(newId),
+      name: newName,
+    };
+    console.log(newSong);
+    await db.raw(`
             INSERT INTO songs (id, name, band_id)
             VALUES
             ("${newSong.id}", "${newSong.name}","${bandId}" )
-        `)
+        `);
 
-   
-   
+    const newProduct: {
+      description: string;
+      id: string;
+      name: string;
+      image_url: string;
+      price: number;
+    } = {
+      id: newSong.id,
+      name: newName,
+      image_url: newImage,
+      description: newDescription,
+      price: newPrice,
+    };
+    await db("products").insert(newProduct);
 
-        const newProduct: { description: string, id: string, name: string,image_url: string, price: number}= {
-            id:newSong.id,
-            name:newName,
-            image_url:newImage,
-            description:newDescription,
-            price:newPrice
-        }
-        await db('products').insert(newProduct);
+    res.status(201).json("Música  cadastrada com sucesso");
+  } catch (error) {
+    console.log(error);
 
-      
-
-        res.status(201).json("Música  cadastrada com sucesso")
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
+    if (req.statusCode === 200) {
+      res.status(500);
     }
-})
 
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
+  }
+};
 
 /*
 export const getAllCars =( async (req: Request, res: Response) => {

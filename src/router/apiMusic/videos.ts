@@ -1,13 +1,4 @@
 import { createId } from "../helpers/createId";
-export enum ROLES {
-  NORMAL = "Normal",
-  STUDENT = "Student",
-  OWNER = "Owner",
-  EMPLOYER = "Employer",
-  AUTHOR = "Author",
-  INSTRUCTOR = "Instructor",
-  BUYER = "Buyer",
-}
 
 type TUserForm = {
   id: string;
@@ -127,22 +118,3 @@ export class User {
         }
        }*/
 }
-
-/*
-const u1 = new User(
-  "u005",
-  "user teste",
-  "teste",
-  "teste123!",
-  "teste@gmail.com",
-  "19/09/2023",
-  "avatar",
-  "Normal"
-);
-
-console.log(
-  `Oi meu nome é ${u1.getName()} , meu email é ${u1.getEmail()} minha idade é ${Number(
-    30
-  )} `
-);
-*/
