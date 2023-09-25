@@ -1,0 +1,172 @@
+[
+	{
+		"id": "f001",
+		"name": "FULANO",
+		"nickname": "fulano-bastos",
+		"password": "jzD_yyEcp0M",
+		"email": "fulano@email.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-07-10 18:25:47"
+	},
+	{
+		"id": "f002",
+		"name": "BELTRANO",
+		"nickname": "beltrano-silva",
+		"password": "m4PlFzASXUc",
+		"email": "beltranosilva@email.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-07-10 18:25:47"
+	},
+	{
+		"id": "f003",
+		"name": "ERIKA LUISA MENDONCA BOTECHIA DE JESUS LEITE",
+		"nickname": "erika-botechia",
+		"password": "Conway22124748",
+		"email": "botechiaeri@gmail.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-07-10 18:25:47"
+	},
+	{
+		"id": "388.567.072-44",
+		"name": "Fernando Moreira",
+		"nickname": "Fernando Moreira",
+		"password": "astrodevADD45",
+		"email": "ast44roADD@email45.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-07-20 18:37:45"
+	},
+	{
+		"id": "268.809.688-56",
+		"name": "Matheus Yago da Luz",
+		"nickname": "matheus-yago",
+		"password": "eSDPhBF9QQ",
+		"email": "matheus-daluz77@metalplasma.com.br",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-07-20 19:21:41"
+	},
+	{
+		"id": "444.476.908-89",
+		"name": "Rosauria Suarez",
+		"nickname": "ROSAURIA-TOP",
+		"password": "ABCabc123!",
+		"email": "ROSAURIA@GMAIL.COM",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-08-30 00:00:08"
+	},
+	{
+		"id": "400.032.000-21",
+		"name": "HOMER SIMPSONS",
+		"nickname": "HOMER-SIMPSONS",
+		"password": "SnowBall123@",
+		"email": "homer.simpsons@gmail.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-01 11:24:45"
+	},
+	{
+		"id": "u001",
+		"name": "MARCELO REZENDE",
+		"nickname": "MARCELO-REZENDE",
+		"password": "marcelo123",
+		"email": "marcelo@email.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-01 16:02:31"
+	},
+	{
+		"id": "u002",
+		"name": "LAURA SILVA",
+		"nickname": "LAU-SILVA",
+		"password": "lau123",
+		"email": "lau@email.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-01 16:02:31"
+	},
+	{
+		"id": "d78bfa51-6b18-4629-a0e6-396890617273",
+		"name": "TAN BIONICA",
+		"nickname": "tan-bionica",
+		"password": "play@Tan-Bionica",
+		"email": "bands@tan-bionica.arg",
+		"avatar": "https://i.postimg.cc/2yN6PdfR/TAN-BIONICA.jpg",
+		"role": "Bands",
+		"createdAt": "2023-09-05 00:09:10"
+	},
+	{
+		"id": "784.818.498-63",
+		"name": "Alícia Mirella Fogaça",
+		"nickname": "alicia-fogaca",
+		"password": "7Lyk3.l51234",
+		"email": "alicia-fogaca91@gmail.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-05 14:30:35"
+	},
+	{
+		"id": "4264caf3-9568-4d98-9576-4501487f9305",
+		"name": "ANITTA",
+		"nickname": "BRA@ANITTA",
+		"password": "play@ANITTA",
+		"email": "bands@ANITTA.play.add",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-08 22:50:43"
+	},
+	{
+		"id": "2015bb2e-4fc3-4635-9973-e68595594201",
+		"name": "LALI ESPOSITO",
+		"nickname": "lali-esposito",
+		"password": "play@LALI-ESPOSITO",
+		"email": "bands@lali-esposito.arg",
+		"avatar": "https://i.postimg.cc/j5XCNw7z/lali-esposito.jpg",
+		"role": "Bands",
+		"createdAt": "2023-09-08 22:58:03"
+	},
+	{
+		"id": "b7abcea3-8a66-4335-9454-00660adf4299",
+		"name": "BABASONICOS",
+		"nickname": "babasonicos",
+		"password": "play@BABASONICOS",
+		"email": "bands@BABASONICOS.play.arg",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Bands",
+		"createdAt": "2023-09-09 00:40:39"
+	},
+	{
+		"id": "2e1c1804-b727-4f08-aa58-5820c704ea92",
+		"name": "THE CHAINSMOKERS",
+		"nickname": "the-chainsmokers",
+		"password": "play@THE-CHAINSMOKERS",
+		"email": "bands@chainsmokers.us",
+		"avatar": "https://i.postimg.cc/Wzzk912Q/chainsmokers.jpg",
+		"role": "Bands",
+		"createdAt": "2023-09-09 01:01:01"
+	},
+	{
+		"id": "23237891-x",
+		"name": "JOÃO  ANTUNES MELLO",
+		"nickname": "joao-melo",
+		"password": "adA!1cp0M",
+		"email": "jabty@email.com",
+		"avatar": "https://i.postimg.cc/ZYx00WwP/img-Avatar.webp",
+		"role": "Normal",
+		"createdAt": "2023-09-10 13:19:39"
+	},
+	{
+		"id": "461.086.678-18",
+		"name": "MARCIAAYLA DA CONCEICAO",
+		"nickname": "MARCIAAYLA",
+		"password": "abc*A123",
+		"email": "marciadaconceicao90@band.com.br",
+		"avatar": "https://i.postimg.cc/4ykFFznm/avatar-Woman1.png",
+		"role": "Normal",
+		"createdAt": 1694491299104
+	}
+]
