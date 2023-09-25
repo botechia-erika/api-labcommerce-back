@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "../../models/knexDB";
-import { DESCRIPTION_CATEGORY, TProductDB } from '../../types/types';
+import {  TProductDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
+import { DESCRIPTION_CATEGORY } from "../../types/types";
 import { matchDescriptionCategory } from "../../helpers/matchDescriptionCategory";
-
+import { Product } from "../../models/Product";
 export const createCar = ( async (req: Request, res: Response) => {
 
     try{
@@ -70,11 +71,15 @@ export const createCar = ( async (req: Request, res: Response) => {
 
 
 export const getAllCars =( async (req: Request, res: Response) => {
+
+
     try {
        const searchTerm = req.query.q as string | undefined
         if(searchTerm === undefined){
         const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
         const result = await db.raw(`SELECT * FROM products WHERE description LIKE "Light" OR description LIKE "Hatch" OR description LIKE "Sedan" OR description LIKE "Prime" OR description LIKE "Lux"`)
+       const frotaDB = result
+       
         res.status(200).send({ message, result})
     }else{
         const searchTerm = req.query.q as string | undefined

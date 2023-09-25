@@ -1,5 +1,5 @@
 -- SQLBook: Code
--- Active: 1694521289305@@127.0.0.1@3306
+-- Active: 1695532141376@@127.0.0.1@3306
 -- SQLBook: Code
 
 
@@ -392,7 +392,7 @@ CREATE TABLE phones(
    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-
+SELECT * FROM phones WHERE user.id = "u001";
 INSERT INTO phones (id, user_id, phone_number ) VALUES 
     ("p001",  "u001" ,"559399999393"),
      ('p002', 'u001', '559399991561')
