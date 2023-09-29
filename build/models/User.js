@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.ROLES = void 0;
-const createId_1 = require("../helpers/createId");
 var ROLES;
 (function (ROLES) {
     ROLES["NORMAL"] = "Normal";
@@ -11,6 +10,9 @@ var ROLES;
     ROLES["AUTHOR"] = "Author";
     ROLES["INSTRUCTOR"] = "Instructor";
     ROLES["BUYER"] = "Buyer";
+    ROLES["BANDS"] = "Bands'";
+    ROLES["ENTERPRISE"] = "Enterprise";
+    ROLES["VENDORS"] = "Vendors";
 })(ROLES || (exports.ROLES = ROLES = {}));
 class User {
     constructor(id, name, nickname, password, email, createdAt, avatar, role) {
@@ -19,16 +21,12 @@ class User {
         this.nickname = nickname;
         this.password = password;
         this.email = email;
+        this.createdAt = createdAt;
         this.avatar = avatar;
         this.role = role;
-        this.createdAt = createdAt;
     }
     getId() {
         return this.id;
-    }
-    setId(newId) {
-        const idCreate = (0, createId_1.createId)(newId);
-        this.id = idCreate;
     }
     getName() {
         return this.name;
@@ -68,9 +66,6 @@ class User {
     }
     getCreatedAt() {
         return this.createdAt;
-    }
-    setCreatedAt(newCreatedAt) {
-        this.createdAt = newCreatedAt;
     }
 }
 exports.User = User;

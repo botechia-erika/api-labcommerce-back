@@ -29,10 +29,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const bandsController = __importStar(require("../../controllers/apiMusic/bandsController"));
 const router = express_1.default.Router();
-router.get('/', bandsController.getAllBands);
-router.post('/', bandsController.createBand);
-router.get('/:id', bandsController.getBandById);
-router.delete('/:id', bandsController.destroyBand);
-router.put('/:id', bandsController.editBand);
+router.get("/", bandsController.getAllBands);
+router.post("/", bandsController.createBand);
+router.get("/:id", bandsController.getBandById);
+router.delete("/:id", bandsController.destroyBand);
+router.put("/:id", bandsController.editBand);
 exports.default = router;
 //# sourceMappingURL=bands.js.map

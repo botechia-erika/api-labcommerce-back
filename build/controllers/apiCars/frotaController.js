@@ -64,6 +64,7 @@ exports.getAllCars = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (searchTerm === undefined) {
             const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA";
             const result = yield knexDB_1.db.raw(`SELECT * FROM products WHERE description LIKE "Light" OR description LIKE "Hatch" OR description LIKE "Sedan" OR description LIKE "Prime" OR description LIKE "Lux"`);
+            const frotaDB = result;
             res.status(200).send({ message, result });
         }
         else {

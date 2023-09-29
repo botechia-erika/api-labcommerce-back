@@ -4,15 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import { createId } from "../../helpers/createId";
 import { TUserDB, TUser } from "../../types/types";
 
-
 import { User } from "../../models/User";
-import { textSchema  } from "./../../schemas/typesSchema";
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.q as string | undefined;
     if (!searchTerm) {
       const message = "LISTA DE USERS CADASTRADO DO SISTEMA";
-      const result: TUserDB[] = await db("users").whereNot("role", "LIKE" , "Bands")
+      const result: TUserDB[] = await db("users").whereNot(
+        "role",
+        "LIKE",
+        "Bands"
+      );
       const usersDB = result;
       const users: User[] = usersDB.map(
         (userDB) =>
@@ -28,20 +30,18 @@ export const getAllUsers = async (req: Request, res: Response) => {
           )
       );
       res.status(200).json(users);
-    } 
-    if(searchTerm){
-      const result: TUserDB[] = await db("users").where(
-        "name",
-        "LIKE",
-        `%${searchTerm}%`
-      ).whereNot("role", "LIKE" , "Bands")
+    }
+    if (searchTerm) {
+      const result: TUserDB[] = await db("users")
+        .where("name", "LIKE", `%${searchTerm}%`)
+        .whereNot("role", "LIKE", "Bands");
 
-      const userDB = [result]
+      const userDB = [result];
       if (!result || result == null) {
         res.status(404).json({ message: "USER NÃO ENCONTRADO" });
       } else {
         const usersDB = result;
-        // criar array de users para instanciar em class User permitindo criar uma lista de usuarios em lugar de unico 
+        // criar array de users para instanciar em class User permitindo criar uma lista de usuarios em lugar de unico
         const users: User[] = usersDB.map(
           (userDB) =>
             new User(
@@ -78,7 +78,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const idExists = await db("users").where("id", "LIKE", `${id}`).whereNot("role", "LIKE", "%Bands%");
+    const idExists = await db("users")
+      .where("id", "LIKE", `${id}`)
+      .whereNot("role", "LIKE", "%Bands%");
     if (!idExists || idExists === undefined) {
       res.status(404);
       throw new Error("'404': User não encontrado");
@@ -111,7 +113,7 @@ export const createUser = async (req: Request, res: Response) => {
     const role = req.body.inputRole as string | undefined;
     const avatar = req.body.inputAvatar as string | undefined;
 
-    const today = new Date().toISOString()
+    const today = new Date().toISOString();
 
     const [userExists] = await db.raw(
       `SELECT id FROM users WHERE id="${cpfCnpj}"`
@@ -134,11 +136,6 @@ export const createUser = async (req: Request, res: Response) => {
       res.status(400);
       throw new Error("id já esta em uso");
     }
-    
-   textSchema.parse(name)
-
-
-
 
     if (typeof email !== "string") {
       res.status(400).send("email invalido");
@@ -181,22 +178,21 @@ export const createUser = async (req: Request, res: Response) => {
         VALUES ("${newUser.getId()}", "${newUser.getName()}", "${newUser.getNickname()}", "${newUser.getEmail()}", 
         "${newUser.getPassword()}" , "${newUser.getCreatedAt()}", "${newUser.getAvatar()}", "${newUser.getRole()}")`);
 
-
-
-    const [userDB]: TUserDB[] = await db("users").where({id: `${newUser.getId()}`})
+    const [userDB]: TUserDB[] = await db("users").where({
+      id: `${newUser.getId()}`,
+    });
     const result = new User(
-          userDB.id,
-          userDB.name,
-          userDB.nickname,
-          userDB.password,
-          userDB.email,
-          userDB.created_at,
-          userDB.avatar_img,
-          userDB.role
-        )
-    
-    res.status(201).json({ message: "usuario cadastrado com sucesso" , result});
+      userDB.id,
+      userDB.name,
+      userDB.nickname,
+      userDB.password,
+      userDB.email,
+      userDB.created_at,
+      userDB.avatar_img,
+      userDB.role
+    );
 
+    res.status(201).json({ message: "usuario cadastrado com sucesso", result });
   } catch (error) {
     console.log(error);
 
@@ -215,7 +211,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const editUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    const cpfCnpj = req.body.inputCpfCnpj as string |undefined;
+    const cpfCnpj = req.body.inputCpfCnpj as string | undefined;
     const name = req.body.inputName as string | undefined;
     const nickname = req.body.inputNickname as string | undefined;
     const email = req.body.inputEmail as string | undefined;
@@ -263,8 +259,10 @@ export const editUserById = async (req: Request, res: Response) => {
         );
       }
     }
-    const [user4edit] = await db("users").where("id" , "LIKE", `${id}`).whereNot("role", "like", "Bands")
-      if ([user4edit]) {
+    const [user4edit] = await db("users")
+      .where("id", "LIKE", `${id}`)
+      .whereNot("role", "like", "Bands");
+    if ([user4edit]) {
       (user4edit.id = user4edit.id),
         (user4edit.name = name || user4edit.name),
         (user4edit.nickname = nickname || user4edit.nickname),

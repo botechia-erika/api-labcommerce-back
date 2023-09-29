@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+/*import { Request, Response } from "express";
 import { db } from "../../models/knexDB";
 import { createId } from "../../helpers/createId";
 import { User } from "../../models/User";
@@ -59,8 +59,8 @@ import { ROLE, TUserDB } from "../../types/types";
             } else {
                 res.send("Erro inesperado")
             }
-        }
-});
+        }*/
+
 /* 
 
 export const destroyPurchase = ( async (req: Request, res: Response) => {

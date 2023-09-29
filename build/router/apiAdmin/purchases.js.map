@@ -1,1 +1,1 @@
-{"version":3,"file":"purchases.js","sourceRoot":"","sources":["../../../src/router/apiAdmin/purchases.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,sDAA2C;AAC3C,sGAAwF;AAGxF,MAAM,MAAM,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAA;AAK/B,MAAM,CAAC,IAAI,CAAC,GAAG,EAAE,mBAAmB,CAAC,cAAc,CAAC,CAAA;AAEpD,kBAAe,MAAM,CAAA"}
+{"version":3,"file":"purchases.js","sourceRoot":"","sources":["../../../src/router/apiAdmin/purchases.ts"],"names":[],"mappings":""}

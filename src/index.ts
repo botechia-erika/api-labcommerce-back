@@ -18,7 +18,6 @@ import frotaRouter from "./router/apiCars/frota";
 import songsRouter from "./router/apiMusic/songs";
 import accountsRouter from "./router/apiBank/accounts";
 import usersRouter from "./router/apiUsers/users";
-import purchasesRouter from "./router/apiAdmin/purchases";
 import phonesRouter from "./router/apiAdmin/phones";
 
 //import purchasesRouter from './router/purchases'

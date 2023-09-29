@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DESCRIPTION_CATEGORY = exports.CURRENTSTATUS = exports.ACCOUNT_TYPE = exports.COURSE_STACK = exports.arrayPersonRole = exports.ACCOUNT = exports.ROLE = void 0;
+exports.DESCRIPTION_CATEGORY = exports.CURRENTSTATUS = exports.ACCOUNT_TYPE = exports.COURSE_STACK = exports.arrayPersonRole = exports.USER_ACCOUNT = exports.ROLE = void 0;
 var ROLE;
 (function (ROLE) {
     ROLE["ADMIN"] = "Admin";
@@ -15,13 +15,13 @@ const usuario = {
     password: "123456",
     role: ROLE.ADMIN
 };
-var ACCOUNT;
-(function (ACCOUNT) {
-    ACCOUNT[ACCOUNT["MENSAL"] = 0] = "MENSAL";
-    ACCOUNT[ACCOUNT["ANUAL"] = 1] = "ANUAL";
-    ACCOUNT[ACCOUNT["PROMO"] = 2] = "PROMO";
-    ACCOUNT[ACCOUNT["COMBO"] = 3] = "COMBO";
-})(ACCOUNT || (exports.ACCOUNT = ACCOUNT = {}));
+var USER_ACCOUNT;
+(function (USER_ACCOUNT) {
+    USER_ACCOUNT[USER_ACCOUNT["OURO"] = 0] = "OURO";
+    USER_ACCOUNT[USER_ACCOUNT["SILVER"] = 1] = "SILVER";
+    USER_ACCOUNT[USER_ACCOUNT["GREEN"] = 2] = "GREEN";
+    USER_ACCOUNT[USER_ACCOUNT["RED"] = 3] = "RED";
+})(USER_ACCOUNT || (exports.USER_ACCOUNT = USER_ACCOUNT = {}));
 const teste = true;
 const userAdmin = {
     nickname: "Muri",

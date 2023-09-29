@@ -30,8 +30,5 @@ const express_1 = __importDefault(require("express"));
 const accountsController = __importStar(require("../../controllers/apiBank/accountsController"));
 const router = express_1.default.Router();
 router.get('/', accountsController.getAllAccounts);
-router.get('/:id/balance', accountsController.getAccountBalance);
-router.post('/', accountsController.createAccount);
-router.put('/:id/balance', accountsController.editAccountBalance);
 exports.default = router;
 //# sourceMappingURL=accounts.js.map

@@ -12,25 +12,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyUser = exports.editUserById = exports.createUser = exports.getUserById = exports.getAllUsers = void 0;
 const knexDB_1 = require("../../models/knexDB");
 const User_1 = require("../../models/User");
-exports.getAllUsers = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const searchTerm = req.query.q;
-        if (searchTerm === undefined) {
+        if (!searchTerm) {
             const message = "LISTA DE USERS CADASTRADO DO SISTEMA";
-            const result = yield (0, knexDB_1.db)("users");
+            const result = yield (0, knexDB_1.db)("users").whereNot("role", "LIKE", "Bands");
             const usersDB = result;
             const users = usersDB.map((userDB) => new User_1.User(userDB.id, userDB.name, userDB.nickname, userDB.password, userDB.email, userDB.created_at, userDB.avatar_img, userDB.role));
             res.status(200).json(users);
         }
-        else {
-            const result = yield (0, knexDB_1.db)("users").where("name", "LIKE", `%${searchTerm}%`);
+        if (searchTerm) {
+            const result = yield (0, knexDB_1.db)("users")
+                .where("name", "LIKE", `%${searchTerm}%`)
+                .whereNot("role", "LIKE", "Bands");
+            const userDB = [result];
             if (!result || result == null) {
                 res.status(404).json({ message: "USER NÃO ENCONTRADO" });
             }
             else {
                 const usersDB = result;
                 const users = usersDB.map((userDB) => new User_1.User(userDB.id, userDB.name, userDB.nickname, userDB.password, userDB.email, userDB.created_at, userDB.avatar_img, userDB.role));
-                res.status(200).json({ message: "Resultado para termo buscado", users });
+                res
+                    .status(200)
+                    .json({ message: "Resultado para termo buscado", users });
             }
         }
     }
@@ -46,11 +51,14 @@ exports.getAllUsers = ((req, res) => __awaiter(void 0, void 0, void 0, function*
             res.send("Erro inesperado");
         }
     }
-}));
-exports.getUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.getAllUsers = getAllUsers;
+const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const searchId = req.params.id;
-        const idExists = knexDB_1.db.raw(`SELECT * FROM users WHERE id=${searchId}`);
+        const id = req.params.id;
+        const idExists = yield (0, knexDB_1.db)("users")
+            .where("id", "LIKE", `${id}`)
+            .whereNot("role", "LIKE", "%Bands%");
         if (!idExists || idExists === undefined) {
             res.status(404);
             throw new Error("'404': User não encontrado");
@@ -72,8 +80,9 @@ exports.getUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function*
             res.send("Erro inesperado");
         }
     }
-}));
-exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.getUserById = getUserById;
+const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const cpfCnpj = req.body.inputCpfCnpj;
         const name = req.body.inputName;
@@ -82,7 +91,7 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
         const password = req.body.inputPassword;
         const role = req.body.inputRole;
         const avatar = req.body.inputAvatar;
-        const today = Date.now();
+        const today = new Date().toISOString();
         const [userExists] = yield knexDB_1.db.raw(`SELECT id FROM users WHERE id="${cpfCnpj}"`);
         if (userExists) {
             res.status(400);
@@ -98,14 +107,8 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400);
             throw new Error("id já esta em uso");
         }
-        if (typeof name !== "string") {
-            res.status(400).send({ message: 'nome invalido' });
-        }
-        if (typeof nickname !== "string") {
-            res.status(400).send('nickname alfa-numerico');
-        }
         if (typeof email !== "string") {
-            res.status(400).send('email invalido');
+            res.status(400).send("email invalido");
         }
         if (typeof password !== "string") {
             throw new Error("'password ' deve ser uma string");
@@ -115,8 +118,13 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
         const newUser = new User_1.User(cpfCnpj, name, nickname, email, password, today.toString(), avatar, role);
         yield knexDB_1.db.raw(`INSERT INTO users (id, name, nickname, email , password, created_at , avatar_img , role)
-        VALUES ("${cpfCnpj}", "${name}", "${nickname}", "${email}", "${password}" , "${today}", "${avatar}", "${role}")`);
-        res.status(201).json({ message: "usuario cadastrado com sucesso" });
+        VALUES ("${newUser.getId()}", "${newUser.getName()}", "${newUser.getNickname()}", "${newUser.getEmail()}", 
+        "${newUser.getPassword()}" , "${newUser.getCreatedAt()}", "${newUser.getAvatar()}", "${newUser.getRole()}")`);
+        const [userDB] = yield (0, knexDB_1.db)("users").where({
+            id: `${newUser.getId()}`,
+        });
+        const result = new User_1.User(userDB.id, userDB.name, userDB.nickname, userDB.password, userDB.email, userDB.created_at, userDB.avatar_img, userDB.role);
+        res.status(201).json({ message: "usuario cadastrado com sucesso", result });
     }
     catch (error) {
         console.log(error);
@@ -130,9 +138,11 @@ exports.createUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.send("Erro inesperado");
         }
     }
-}));
-exports.editUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.createUser = createUser;
+const editUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const id = req.params.id;
         const cpfCnpj = req.body.inputCpfCnpj;
         const name = req.body.inputName;
         const nickname = req.body.inputNickname;
@@ -168,18 +178,24 @@ exports.editUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function
                 throw new Error("'new password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial");
             }
         }
-        const [user4edit] = yield knexDB_1.db.raw(`SELECT * FROM users WHERE users.id=${cpfCnpj}`);
+        const [user4edit] = yield (0, knexDB_1.db)("users")
+            .where("id", "LIKE", `${id}`)
+            .whereNot("role", "like", "Bands");
         if ([user4edit]) {
-            user4edit.id = user4edit.id,
-                user4edit.name = name || user4edit.name,
-                user4edit.nickname = nickname || user4edit.nickname,
-                user4edit.email = email || user4edit.email,
-                user4edit.password = password || user4edit.password,
-                user4edit.role = role || user4edit.role,
-                user4edit.avatar_img = avatar || user4edit.avatar;
+            (user4edit.id = user4edit.id),
+                (user4edit.name = name || user4edit.name),
+                (user4edit.nickname = nickname || user4edit.nickname),
+                (user4edit.email = email || user4edit.email),
+                (user4edit.password = password || user4edit.password),
+                (user4edit.role = role || user4edit.role),
+                (user4edit.avatar_img = avatar || user4edit.avatar);
         }
-        yield (0, knexDB_1.db)("users").update(user4edit).where({ id: `${cpfCnpj}` });
-        res.status(201).send({ message: "user atualizado com sucesso", result: user4edit });
+        yield (0, knexDB_1.db)("users")
+            .update(user4edit)
+            .where({ id: `${id}` });
+        res
+            .status(201)
+            .send({ message: "user atualizado com sucesso", result: user4edit });
     }
     catch (error) {
         console.log(error);
@@ -193,8 +209,9 @@ exports.editUserById = ((req, res) => __awaiter(void 0, void 0, void 0, function
             res.send("Erro inesperado");
         }
     }
-}));
-exports.destroyUser = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+exports.editUserById = editUserById;
+const destroyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const idToDelete = req.params.id;
         const [users] = yield (0, knexDB_1.db)("users").where({ id: idToDelete });
@@ -202,7 +219,7 @@ exports.destroyUser = ((req, res) => __awaiter(void 0, void 0, void 0, function*
             throw new Error("usuário  nao encontrado");
         }
         yield (0, knexDB_1.db)("users").delete().where({ id: idToDelete });
-        res.status(200).json({ message: 'users deletado com sucesso' });
+        res.status(200).json({ message: "users deletado com sucesso" });
     }
     catch (error) {
         console.log(error);
@@ -216,5 +233,6 @@ exports.destroyUser = ((req, res) => __awaiter(void 0, void 0, void 0, function*
             res.send("Erro inesperado");
         }
     }
-}));
+});
+exports.destroyUser = destroyUser;
 //# sourceMappingURL=usersController.js.map
