@@ -1,0 +1,29 @@
+[
+    {
+        "id": "pgo-f73afe8b-497b-45f2-adb6-7f9c4453f612",
+        "buyer": "388.567.072-44",
+        "product": "ZAC-1614",
+        "price": 2650,
+        "quantity": 4,
+        "createdAt": "29/09/2023 04:26am",
+        "rentalStartAt": "30/09/2023 11:00am",
+        "rentalEndAt": "30/01/2024 11:00am",
+        "numberOfPayments": 2,
+        "finalPrice": 10400,
+        "totalDiscount": 200,
+        "paymentsTicket": [{
+            "id" : "ticket-01-02",
+            "date": "29/09/2023 04:26am",
+            "totalPayed": 5200,
+            "rest4Pay": 5200,
+            "currentStatus": "green"
+        },
+     {
+            "id" : "ticket-02-02",
+            "date": "29/11/2023 04:26am",
+            "totalPayed": 5200,
+            "rest4Pay": 5200,
+            "paymentOk": "blue"
+            }]
+    }
+]

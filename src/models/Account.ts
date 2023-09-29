@@ -2,16 +2,12 @@ export class Account {
     constructor(
         private id: string,
         private balance: number,
-        private ownerId: string,
-        private createdAt: string
+        private owner: string,
+        private category: string
     ) {}
 
     public getId(): string {
         return this.id
-    }
-
-    public setId(value: string): void {
-        this.id = value
     }
 
     public getBalance(): number {
@@ -22,19 +18,19 @@ export class Account {
         this.balance = value
     }
 
-    public getOwnerId(): string {
-        return this.ownerId
+    public getOwner(): string {
+        return this.owner
     }
 
     public setOwnerId(value: string): void {
-        this.ownerId = value
+        this.owner = value
     }
 
-    public getCreatedAt(): string {
-        return this.createdAt
+    public getCategory(): string {
+        return this.category
     }
 
-    public setCreatedAt(value: string): void {
-        this.createdAt = value
+    public setCategory(value: string): void {
+        this.category = value
     }
 }

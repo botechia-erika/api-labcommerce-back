@@ -1,5 +1,5 @@
 -- SQLBook: Code
--- Active: 1695532141376@@127.0.0.1@3306
+-- Active: 1695931117462@@127.0.0.1@3306
 -- SQLBook: Code
 
 
@@ -618,10 +618,11 @@ drop table accounts;
 
 CREATE TABLE accounts (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    owner_id TEXT NOT NULL,
+    owner TEXT NOT NULL,
     balance REAL DEFAULT (0) NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL,
-    FOREIGN KEY (owner_id) REFERENCES users (id)
+    update_at TEXT NOT NULL DEFAULT ( DATETIME()),
+    FOREIGN KEY (owner) REFERENCES users (id)
       ON UPDATE CASCADE
       ON DELETE CASCADE
 );

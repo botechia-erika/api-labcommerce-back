@@ -214,8 +214,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const editUserById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    const cpfCnpj = req.body.inputCpfCnpj as string;
+    const id = req.params.id as string;
+    const cpfCnpj = req.body.inputCpfCnpj as string |undefined;
     const name = req.body.inputName as string | undefined;
     const nickname = req.body.inputNickname as string | undefined;
     const email = req.body.inputEmail as string | undefined;

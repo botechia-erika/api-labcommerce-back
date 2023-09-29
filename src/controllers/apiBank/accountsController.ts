@@ -1,26 +1,25 @@
 import { Request, Response } from "express"
-import { Account } from "../../models/Accounts";
+import { Account } from "../../models/Account";
 import { accounts } from "../../dataTS/accounts";
 import { ACCOUNT_TYPE, TAccountDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
+import fs from 'fs'
+import path from "path";
+const pathScore = path.join(__dirname, './../../../dataJSON/dataScore.json')
+const scoreData = JSON.parse(fs.readFileSync(pathScore, 'utf-8')) 
+
 /* import fs from 'fs'
 import path from 'path'
 const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
 import { db } from "../../models/knexDB";
 
+
 export const getAllAccounts = (async (req: Request, res: Response) => {
     try {
-        const accountsDB: TAccountDB[] = await db("accounts")
+        const accountsDB = await db("accounts")
 
-        const accounts = accountsDB.map((accountDB) => new Account(
-            accountDB.id,
-            accountDB.balance,
-            accountDB.owner_id,
-            accountDB.created_at
-        ))
-
-        res.status(200).send(accounts)
+        res.status(200).send(accountsDB)
     } catch (error) {
         console.log(error)
 
@@ -35,7 +34,7 @@ export const getAllAccounts = (async (req: Request, res: Response) => {
         }
     }
 })
-
+/* 
 export const getAccountBalance = (async (req: Request, res: Response) => {
     try {
         const id = req.params.id
@@ -168,4 +167,4 @@ export const editAccountBalance = ( async (req: Request, res: Response) => {
             res.send("Erro inesperado")
         }
     }
-})
+}) */

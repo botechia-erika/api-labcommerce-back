@@ -8,15 +8,14 @@
     "start": "clear && node ./src/index.js",
     "cinco": "tsc && node ./build/index.js",
     "build": "tsc",
-    "dev": "tsnd ./src/index.ts && nodemon ./build/index.js",
-    "serve": "nodemon ./build/index.js && --watch ./src/index.ts"
+    "dev": "tsnd ./src/index.ts && nodemon ./build/index.js"
   },
   "keywords": [
     "to-do-list"
   ],
   "repository": {
     "type": "GIT",
-    "url": "https://github.com/botechia-erika/api-labecommerce-back.git"
+    "url": "https://github.com/botechia-erika/orange-ecommerce-backend.git"
   },
   "author": "botechia-erika <botechia94.erika@gmail.com>",
   "license": "MIT",

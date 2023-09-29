@@ -37,11 +37,11 @@ const usuario :TPerson={
 }
 
 
-export enum ACCOUNT{
-    "MENSAL" ,
-    "ANUAL",
-    "PROMO",
-    "COMBO"
+export enum USER_ACCOUNT{
+    "OURO" ,
+    "SILVER",
+    "GREEN",
+    "RED"
 }
 const teste = true
 type TAdminAccount = {
