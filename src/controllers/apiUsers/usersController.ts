@@ -20,7 +20,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         (userDB) =>
           new User(
             userDB.id,
-            userDB.name,
+            userDB.registerName,
             userDB.nickname,
             userDB.password,
             userDB.email,
@@ -46,7 +46,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
           (userDB) =>
             new User(
               userDB.id,
-              userDB.name,
+              userDB.registerName,
               userDB.nickname,
               userDB.password,
               userDB.email,
@@ -106,7 +106,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const createUser = async (req: Request, res: Response) => {
   try {
     const cpfCnpj = req.body.inputCpfCnpj as string;
-    const name = req.body.inputName as string | undefined;
+    const registerName = req.body.inputName as string | undefined;
     const nickname = req.body.inputNickname as string | undefined;
     const email = req.body.inputEmail as string | undefined;
     const password = req.body.inputPassword as string | undefined;
@@ -158,7 +158,7 @@ export const createUser = async (req: Request, res: Response) => {
     }
     const newUser: User = new User(
       cpfCnpj,
-      name,
+      registerName,
       nickname,
       email,
       password,
@@ -168,14 +168,14 @@ export const createUser = async (req: Request, res: Response) => {
     );
     /*         const user : User[] = new User(
             newUser.id,
-            newUser.name,
+            newUser.registerName,
             newUser.nickname,
             newUser.password,
             newUser.email, 
             today
         )*/
     await db.raw(`INSERT INTO users (id, name, nickname, email , password, created_at , avatar_img , role)
-        VALUES ("${newUser.getId()}", "${newUser.getName()}", "${newUser.getNickname()}", "${newUser.getEmail()}", 
+        VALUES ("${newUser.getId()}", "${newUser.getRegisterName()}", "${newUser.getNickname()}", "${newUser.getEmail()}", 
         "${newUser.getPassword()}" , "${newUser.getCreatedAt()}", "${newUser.getAvatar()}", "${newUser.getRole()}")`);
 
     const [userDB]: TUserDB[] = await db("users").where({
@@ -183,7 +183,7 @@ export const createUser = async (req: Request, res: Response) => {
     });
     const result = new User(
       userDB.id,
-      userDB.name,
+      userDB.registerName,
       userDB.nickname,
       userDB.password,
       userDB.email,
@@ -212,15 +212,15 @@ export const editUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
     const cpfCnpj = req.body.inputCpfCnpj as string | undefined;
-    const name = req.body.inputName as string | undefined;
+    const registerName = req.body.inputName as string | undefined;
     const nickname = req.body.inputNickname as string | undefined;
     const email = req.body.inputEmail as string | undefined;
     const password = req.body.inputPasswordConfirm as string | undefined;
     const role = req.body.inputRole as string | undefined;
     const avatar = req.body.inputAvatar as string | undefined;
 
-    if (name) {
-      if (typeof name !== "string") {
+    if (registerName) {
+      if (typeof registerName !== "string") {
         res.status(400);
         throw new Error("Nome do produto deve ser do tipo string");
       }
@@ -264,7 +264,7 @@ export const editUserById = async (req: Request, res: Response) => {
       .whereNot("role", "like", "Bands");
     if ([user4edit]) {
       (user4edit.id = user4edit.id),
-        (user4edit.name = name || user4edit.name),
+        (user4edit.registerName = registerName || user4edit.registerName),
         (user4edit.nickname = nickname || user4edit.nickname),
         (user4edit.email = email || user4edit.email),
         (user4edit.password = password || user4edit.password),

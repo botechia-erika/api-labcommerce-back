@@ -1,68 +1,117 @@
-/*import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { db } from "../../models/knexDB";
 import { createId } from "../../helpers/createId";
 import { User } from "../../models/User";
 import { Phone } from "../../models/Phone";
 import { Account } from "../../models/Account";
 import { ROLE, TUserDB } from "../../types/types";
-// backend
-// importar db, Buyer, Phone
 
 
-// dados do usuarioexport const createPurchase = ( async (req: Request, res: Response) => {
-            try {
-                // dados do cliente
-                const cpfCnpj = req.body.inputCpfCnpj as string
-                const name = req.body.inputName as string | undefined
-                const nickname = req.body.inputNickname as string|undefined
-                const email = req.body.inputEmail as string | undefined
-                const password = req.body.inputPassword as string | undefined
-                const role = req.body.inputRole as string | undefined
-                const avatar = req.body.inputAvatar as string | undefined
-                
-                                                       
-                // dados do produto
-                const purchaseId = req.body.inputId   as string 
-                const purchaseProduct = req.body.inputProduct   as string 
-                const quantity = req.body.inputQuantity as number
-                const finalPrice = req.body.inputFinalPrice as number 
-                const createdAt = new Date().toISOString()               
-               // dados valores de pagamento
-                const totalPaid = req.body.inputTotalPaid as number
-                const rest2Pay = finalPrice - totalPaid as number
 
-                // dados criação da conta de nova aluguel
-                const newAccountId = req.body.accountId as undefined
-                const balance = rest2Pay
-                const ownerId = req.body.inputOwnerId as string | undefined
-                
-                const defineOwnerId = (ownerId:string|undefined)=>{
-                if(!ownerId){
-                   const  newOwner = cpfCnpj
-                   return newOwner
-                }else{
-                    const newOwner = ownerId
-                    return newOwner
-                }
-            }
-               
-            res.send(200).json({message: "cadastro realizado com sucesso" })
-                } catch (error) {
-            console.log(error)
-    
-            if (req.statusCode === 200) {
-                res.status(500)
-            }
-    
-            if (error instanceof Error) {
-                res.send(error.message)
-            } else {
-                res.send("Erro inesperado")
-            }
-        }*/
+import fs from 'fs';
+export const createPurchaseTicket = ( async (req: Request, res: Response) => {
+interface User {
+  cpfCnpj: string;
+  name?: string;
+  nickname?: string;
+  email?: string;
+  password?: string;
+  role?: string;
+  avatar?: string;
+}
 
-/* 
+interface Product {
+  purchaseId: string;
+  purchaseProduct: string;
+  quantity: number;
+  finalPrice: number;
+  createdAt: string;
+}
 
+interface Payment {
+  totalPaid: number;
+  rest2Pay: number;
+}
+
+interface RentalAccount {
+  newAccountId?: undefined;
+  balance: number;
+  ownerId?: string;
+}
+
+const defineOwnerId = (ownerId: string | undefined, cpfCnpj: string): string => {
+  return ownerId ?? cpfCnpj;
+};
+
+const createTicket = (req: Request, res: Response): void => {
+  const {
+    inputCpfCnpj,
+    inputName,
+    inputNickname,
+    inputEmail,
+    inputPassword,
+    inputRole,
+    inputAvatar,
+    inputId,
+    inputProduct,
+    inputQuantity,
+    inputFinalPrice,
+    inputTotalPaid,
+    accountId,
+    inputOwnerId,
+  } = req.body;
+
+  const user: User = {
+    cpfCnpj: inputCpfCnpj as string,
+    name,
+    nickname,
+    email,
+    password,
+    role,
+    avatar,
+  };
+
+  const product: Product = {
+    purchaseId: inputId as string,
+    purchaseProduct: inputProduct as string,
+    quantity: inputQuantity as number,
+    finalPrice: inputFinalPrice as number,
+    createdAt: new Date().toISOString(),
+  };
+
+  const payment: Payment = {
+    totalPaid: inputTotalPaid as number,
+    rest2Pay: product.finalPrice - inputTotalPaid as number,
+  };
+
+  const rentalAccount: RentalAccount = {
+    newAccountId: undefined,
+    balance: payment.rest2Pay,
+    ownerId: defineOwnerId(inputOwnerId as string, user.cpfCnpj),
+  };
+
+  const ticket = {
+    ...user,
+    ...product,
+    ...payment,
+    ...rentalAccount,
+  };
+
+  const ticketJSON = JSON.stringify(ticket);
+
+  fs.writeFile('ticket.json', ticketJSON, (err) => {
+    if (err) {
+      console.error('Erro ao gerar o ticket de pagamento.');
+      res.status(500).send('Erro ao gerar o ticket de pagamento.');
+    } else {
+      console.log('Ticket de pagamento gerado com sucesso.');
+      res.status(200).send('Ticket de pagamento gerado com sucesso.');
+    }
+  });
+};
+})
+
+/*
 export const destroyPurchase = ( async (req: Request, res: Response) => {
 
         try {
