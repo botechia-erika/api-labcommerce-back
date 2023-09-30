@@ -14,7 +14,7 @@ export enum ROLES {
 
 type TUserForm = {
   id: string;
-  name: string;
+  registerName: string;
   nickname: string;
   password: string;
   role: string
@@ -22,7 +22,7 @@ type TUserForm = {
 
 export class User {
   private id: string;
-  private name: string;
+  private registerName: string;
   private nickname: string;
   private email: string;
   private password: string;
@@ -31,7 +31,7 @@ export class User {
   private role: string;
   constructor(
     id: string,
-    name: string,
+    registerName: string,
     nickname: string,
     password: string,
     email: string,
@@ -40,7 +40,7 @@ export class User {
     role: string
   ) {
     this.id = id;
-    this.name = name;
+    this.registerName = registerName;
     this.nickname = nickname;
     this.password = password;
     this.email = email;
@@ -58,12 +58,12 @@ export class User {
 
 
 
-  public getName(): string {
-    return this.name;
+  public getregisterName(): string {
+    return this.registerName;
   }
 
-  public setName(newName: string) {
-    this.name = newName;
+  public setregisterName(newregisterName: string) {
+    this.registerName = newregisterName;
   }
 
   public getNickname(): string {
@@ -71,7 +71,7 @@ export class User {
   }
 
   public setNickname(newNickname: string) {
-    this.name = newNickname;
+    this.registerName = newNickname;
   }
 
   public getEmail(): string {
