@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { BaseDatabase } from "../../database/BaseDatabase";
 import {  TProductDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
 import { DESCRIPTION_CATEGORY } from "../../types/types";

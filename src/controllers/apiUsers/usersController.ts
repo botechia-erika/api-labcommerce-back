@@ -1,49 +1,26 @@
 import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { BaseDatabase } from "../../database/BaseDatabase";
 import { v4 as uuidv4 } from "uuid";
 import { createId } from "../../helpers/createId";
 import { TUserDB, TUser } from "../../types/types";
 
 import { User } from "../../models/User";
+
+import { UserDataBase } from "../../database/UserDatabase";
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const searchTerm = req.query.q as string | undefined;
-    if (!searchTerm) {
-      const message = "LISTA DE USERS CADASTRADO DO SISTEMA";
-      const result: TUserDB[] = await db("users").whereNot(
-        "role",
-        "LIKE",
-        "Bands"
-      );
-      const usersDB = result;
-      const users: User[] = usersDB.map(
-        (userDB) =>
-          new User(
-            userDB.id,
-            userDB.name,
-            userDB.nickname,
-            userDB.password,
-            userDB.email,
-            userDB.created_at,
-            userDB.avatar_img,
-            userDB.role
-          )
-      );
-      res.status(200).json(users);
-    }
-    if (searchTerm) {
-      const result: TUserDB[] = await db("users")
-        .where("name", "LIKE", `%${searchTerm}%`)
-        .whereNot("role", "LIKE", "Bands");
+    const q = req.query.q as string | undefined;
 
-      const userDB = [result];
-      if (!result || result == null) {
-        res.status(404).json({ message: "USER NÃO ENCONTRADO" });
-      } else {
-        const usersDB = result;
-        // criar array de users para instanciar em class User permitindo criar uma lista de usuarios em lugar de unico
-        const users: User[] = usersDB.map(
-          (userDB) =>
+    const usersDatabase = new UserDataBase()
+    const usersDB = await usersDatabase.findUsers(q)
+
+    // error 404 para usuarios nao encontrados
+    if(usersDB.length === 0){
+      res.status(404)
+      throw new Error('404 users nao encontrado')
+    }
+
+    const users: User[] = usersDB.map((userDB:TUserDB|undefined) =>
             new User(
               userDB.id,
               userDB.name,
@@ -53,14 +30,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
               userDB.created_at,
               userDB.avatar_img,
               userDB.role
-            )
-        );
-        res
-          .status(200)
-          .json({ message: "Resultado para termo buscado", users });
-      }
-    }
-  } catch (error) {
+    ))   
+          res.status(200).json(users);
+      
+        }
+  
+   catch (error) {
     console.log(error);
 
     if (req.statusCode === 200) {
@@ -75,22 +50,18 @@ export const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+/*export const getUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const idExists = await db("users")
-      .where("id", "LIKE", `${id}`)
-      .whereNot("role", "LIKE", "%Bands%");
-    if (!idExists || idExists === undefined) {
-      res.status(404);
-      throw new Error("'404': User não encontrado");
-    } else {
-      const result = [idExists];
-      res.status(200).json({ message: "USUARIO ENCONTRADO", result });
-    }
+
+    res.status(200).json(users);
+      
   } catch (error) {
     console.log(error);
 
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
     if (req.statusCode === 200) {
       res.status(500);
     }
@@ -103,7 +74,7 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+/*export const createUser = async (req: Request, res: Response) => {
   try {
     const cpfCnpj = req.body.inputCpfCnpj as string;
     const name = req.body.inputName as string | undefined;
@@ -173,7 +144,7 @@ export const createUser = async (req: Request, res: Response) => {
             newUser.password,
             newUser.email, 
             today
-        )*/
+        )
     await db.raw(`INSERT INTO users (id, name, nickname, email , password, created_at , avatar_img , role)
         VALUES ("${newUser.getId()}", "${newUser.getName()}", "${newUser.getNickname()}", "${newUser.getEmail()}", 
         "${newUser.getPassword()}" , "${newUser.getCreatedAt()}", "${newUser.getAvatar()}", "${newUser.getRole()}")`);
@@ -317,4 +288,4 @@ export const destroyUser = async (req: Request, res: Response) => {
       res.send("Erro inesperado");
     }
   }
-};
+};*/

@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { db } from "../../models/knexDB"
+import { db } from "../../database/BaseDatabase"
 import {v4 as uuidv4} from 'uuid';
 import { createId } from "../../helpers/createId";
 

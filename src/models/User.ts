@@ -21,34 +21,20 @@ type TUserForm = {
 };
 
 export class User {
-  private id: string;
-  private name: string;
-  private nickname: string;
-  private email: string;
-  private password: string;
-  private createdAt: string;
-  private avatar: string;
-  private role: string;
+
   constructor(
-    id: string,
-    name: string,
-    nickname: string,
-    password: string,
-    email: string,
-    createdAt: string,
-    avatar: string,
-    role: string
-  ) {
-    this.id = id;
-    this.name = name;
-    this.nickname = nickname;
-    this.password = password;
-    this.email = email;
-    this.createdAt = createdAt;
-    this.avatar = avatar;
-    this.role = role;
+    private id: string,
+    private name: string,
+    private nickname: string,
+    private password: string,
+    private email: string,
+    private avatar: string,
+    private role: string,
+    private createdAt: string
+    ){}
+    
   
-  }
+
 
   // metodos get e setter
 

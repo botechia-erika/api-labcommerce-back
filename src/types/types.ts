@@ -1,4 +1,5 @@
-import { db } from "../models/knexDB"
+import { User } from "../models/User"
+import { db } from "../database/BaseDatabase"
 
 /* ------------  AULA TYPESCRIPT 1 --------------------------- */
 
@@ -24,7 +25,9 @@ export type TPerson = {
 export enum ROLE {
     ADMIN = "Admin",
     NORMAL = "Normal",
-    BUYER = "Buyer"
+    BUYER = "Buyer",
+    STUDENT="Student",
+    BAND = "Band"
 }
 
 const usuario :TPerson={
@@ -322,3 +325,6 @@ export type TPhoneDB = {
   phone_number: string;
 }
 
+export class Student extends User{
+
+}

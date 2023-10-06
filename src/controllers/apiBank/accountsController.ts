@@ -12,7 +12,7 @@ const scoreData = JSON.parse(fs.readFileSync(pathScore, 'utf-8'))
 import path from 'path'
 const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
-import { db } from "../../models/knexDB";
+import { BaseDatabase } from "../../database/BaseDatabase";
 
 
 export const getAllAccounts = (async (req: Request, res: Response) => {

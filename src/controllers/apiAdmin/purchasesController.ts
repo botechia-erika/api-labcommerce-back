@@ -1,15 +1,16 @@
-/*import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { Request, Response } from "express";
+import { BaseDatabase } from "../../database/BaseDatabase";
 import { createId } from "../../helpers/createId";
 import { User } from "../../models/User";
 import { Phone } from "../../models/Phone";
 import { Account } from "../../models/Account";
 import { ROLE, TUserDB } from "../../types/types";
-// backend
-// importar db, Buyer, Phone
 
 
-// dados do usuarioexport const createPurchase = ( async (req: Request, res: Response) => {
+
+// dados do usuarioexport 
+
+const createPurchase = ( async (req: Request, res: Response) => {
             try {
                 // dados do cliente
                 const cpfCnpj = req.body.inputCpfCnpj as string
@@ -22,7 +23,7 @@ import { ROLE, TUserDB } from "../../types/types";
                 
                                                        
                 // dados do produto
-                const purchaseId = req.body.inputId   as string 
+                const purchaseId = req.body.inputId   as string | undefined
                 const purchaseProduct = req.body.inputProduct   as string 
                 const quantity = req.body.inputQuantity as number
                 const finalPrice = req.body.inputFinalPrice as number 
@@ -59,8 +60,9 @@ import { ROLE, TUserDB } from "../../types/types";
             } else {
                 res.send("Erro inesperado")
             }
-        }*/
-
+        }
+    }
+)
 /* 
 
 export const destroyPurchase = ( async (req: Request, res: Response) => {

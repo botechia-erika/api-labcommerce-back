@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "labecommerce serviside backend api arquitetura refatorada",
   "main": "index.js",
+
   "scripts": {
     "node": "node ./src/index.js",
     "start": "clear && node ./src/index.js",
     "cinco": "tsc && node ./build/index.js",
     "build": "tsc",
-    "dev": "tsnd ./src/index.ts && nodemon ./build/index.js"
+    "dev": "tsnd ./src/index.ts && nodemon ./build/index.js",
+    "classTest": "tsnd ./src/models/User.ts"
+
   },
   "keywords": [
     "to-do-list"
