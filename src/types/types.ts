@@ -1,4 +1,4 @@
-import { db } from "../models/knexDB"
+import { db } from "../database/BaseDatabase"
 
 /* ------------  AULA TYPESCRIPT 1 --------------------------- */
 

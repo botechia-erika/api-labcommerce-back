@@ -1,8 +1,8 @@
-/*import express,  { Router } from "express";
+                    /*import express,  { Router } from "express";
 import * as  fruitsController from '../controllers/fruitsController'
 
 
-const router = express.Router()
+const router = express.Router()s
 
 router.get('/', fruitsController.getAllfruits)
 router.post('/', fruitsController.createProduct)

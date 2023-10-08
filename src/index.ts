@@ -11,15 +11,13 @@ import express from "express";
 import { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { db } from "./models/knexDB";
-
-import bandsRouter from "./router/apiMusic/bands";
+/*import bandsRouter from "./router/apiMusic/bands";
 import frotaRouter from "./router/apiCars/frota";
 import songsRouter from "./router/apiMusic/songs";
 import accountsRouter from "./router/apiBank/accounts";
-import usersRouter from "./router/apiUsers/users";
 import purchasesRouter from "./router/apiAdmin/purchases";
-import phonesRouter from "./router/apiAdmin/phones";
+import phonesRouter from "./router/apiAdmin/phones";*/
+import usersRouter from "./router/apiUsers/users";
 
 //import purchasesRouter from './router/purchases'
 const app = express();
@@ -38,12 +36,12 @@ app.get("/ping", (req: Request, res: Response) => {
   res.send("Pong");
 });
 
-app.use("/phones", phonesRouter);
+/*app.use("/phones", phonesRouter);
 app.use("/frota", frotaRouter);
 app.use("/songs", songsRouter);
-app.use("/accounts", accountsRouter);
-app.use("/users", usersRouter);
 app.use("/bands", bandsRouter);
+app.use("/accounts", accountsRouter);*/
+app.use("/users", usersRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("HomePage");
