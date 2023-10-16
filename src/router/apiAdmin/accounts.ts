@@ -1,5 +1,5 @@
 import express, {Router} from 'express'
-import * as accountsController from '../../controllers/apiBank/accountsController';
+import * as accountsController from '../../controllers/apiAdmin/accountsController';
 
 const router = express.Router()
 
