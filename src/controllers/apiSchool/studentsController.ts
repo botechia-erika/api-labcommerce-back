@@ -71,7 +71,7 @@ export const getUserById = ( async (req: Request, res: Response) => {
 )
 
 
-/*xport const createUser = ( async (req: Request, res: Response) => {
+export const createUser = ( async (req: Request, res: Response) => {
 
     try {
         const CpfCnpj = req.body.inputputName as string | undefined

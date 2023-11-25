@@ -6,7 +6,6 @@ import { TUserDB, TUser } from "../../types/types";
 
 
 import { User } from "../../models/User";
-import { textSchema  } from "./../../schemas/typesSchema";
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.q as string | undefined;
@@ -135,7 +134,6 @@ export const createUser = async (req: Request, res: Response) => {
       throw new Error("id já esta em uso");
     }
     
-   textSchema.parse(name)
 
 
 
