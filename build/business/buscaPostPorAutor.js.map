@@ -1,1 +1,0 @@
-{"version":3,"file":"buscaPostPorAutor.js","sourceRoot":"","sources":["../../src/business/buscaPostPorAutor.ts"],"names":[],"mappings":";;;AAEA,SAAgB,kBAAkB,CAAC,KAAY,EAAE,cAAqB;IAClE,OAAO,KAAK,CAAC,MAAM,CACf,CAAC,IAAS,EAAC,EAAE;QACT,OAAO,IAAI,CAAC,KAAK,KAAK,cAAc,CAAA;IACxC,CAAC,CACJ,CAAA;AACL,CAAC;AAND,gDAMC"}
