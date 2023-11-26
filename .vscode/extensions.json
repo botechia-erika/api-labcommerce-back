@@ -1,8 +1,0 @@
-
-{
-    "code-runner.defaultLanguage": "typescript",
-    "recommendations": [
-        "alexcvzz.vscode-sqlite",
-        "cweijan.vscode-database-client2"
-    ]
-}
