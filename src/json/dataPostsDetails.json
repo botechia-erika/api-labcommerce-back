@@ -4,9 +4,9 @@
     "postImg":  "https://i.postimg.cc/SKDqcQz5/postImg.png",
     "tags": ["post"],
     "feedbackList": [],
-    "totalVisits": 0,
+    "totalViews": 0,
     "totalLikes": 0,
     "totalFeedback": 0 ,
-    "postReference": null
+    "postReference": "p00"
 }
 ]

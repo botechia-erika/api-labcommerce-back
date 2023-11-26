@@ -6,15 +6,18 @@ import path from 'path'
 import { Posts } from "../../models/Posts";
 import { IPostDB, IPostDetaills } from "../../interfaces/interfaces";
 import { number } from "zod";
-import { resolveAny } from "dns";
-const detailsFilePath = path.join(__dirname, './../../json/dataPostsDestails.json')
-const detailsData = JSON.parse(fs.readFileSync(detailsFilePath, 'utf-8')) 
+import { Post } from "../../models/Post";
+import { searchPostReference } from "../../helpers/searchPostReference";
+
+
 
 
 export const createPost = ( async (req: Request, res: Response) => {
 
     try{
+        const detailsFilePath = path.join(__dirname, './../../../json/dataPostsDetails.json')
 
+        const detailsData = JSON.parse(fs.readFileSync(detailsFilePath, 'utf-8')) 
         // Primeira parte cuida da parte de insercao em DB SQLITE
         const postId = uuidv4() as string
         const creatorId = req.body.inputAuthor as string
@@ -106,51 +109,76 @@ export const createPost = ( async (req: Request, res: Response) => {
 })
 
 
-export const getAllCars =( async (req: Request, res: Response) => {
-
-
+export const getAllPosts = async (req: Request, res: Response) => {
+    const detailsFilePath = path.join(__dirname, '../../../src/json/dataPostsDetails.json');
+  
+    const detailsData = JSON.parse(fs.readFileSync(detailsFilePath, 'utf-8'));
+  
     try {
-       const searchTerm = req.query.q as string | undefined
-        if(searchTerm === undefined){
-        const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
-        const result = await db.raw(`SELECT * FROM products WHERE description LIKE "Light" OR description LIKE "Hatch" OR description LIKE "Sedan" OR description LIKE "Prime" OR description LIKE "Lux"`)
-       const frotaDB = result
-       
-        res.status(200).send({ message, result})
-    }else{
-        const searchTerm = req.query.q as string | undefined
+      const q = req.query.q as string | undefined;
+  
+      if (!q) {
+        const message = "LISTA DE POSTS CADASTRADO DO SISTEMA";
+        const postsDB = await db("posts");
+const result: Posts[] = postsDB.map(post =>(
+    new Posts(
+        post.id, 
+        post.creator_id,
+        post.content,
+        post.likes,
+        post.dislikes,
+        post.created_at,
+        post.updated_at 
+    )
+)
+)
+
+  
+
+        res.status(200).send({ message, result });
+      } else {
 
 
-        if(searchTerm && searchTerm.length < 0 ||searchTerm === "" ){
-            res.status(400)
-            throw new Error('Pesquisa deve ter ao menos 1 caracter')
+        const postDB= await db("posts").where("creator_id", "LIKE", `%${q}%`);
+  
+        if (!postDB) {
+          res.status(404);
+          throw new Error("404: NOME do Produto NÃO Encontrado");
         }
-
-       const [result] =await db("products").where("name", "LIKE" , `%${searchTerm}%`)
-        if(!result){
-            res.status(404)
-            throw new Error("404: NOME do Produto NÃO Encontrado")     
-        }
-
-        
-
-        res.status(200).send({result, message: "PRODUTO ENCONTRADO"})
+  
+        const postDetails = searchPostReference(detailsData, postDB[0].id)[0];
+  
+        const postSelected: Post = new Post(
+          postDB[0].id,
+          postDB[0].creator_id,
+          postDB[0].content,
+          postDB[0].likes,
+          postDB[0].dislikes,
+          postDB[0].created_at,
+          postDB[0].updated_at,
+          postDetails.id,
+          postDetails.postImg,
+          postDetails.tags,
+          postDetails.feedbackList,
+          postDetails.totalVisits
+        );
+  
+        res.status(200).send({ postSelected, message: "PRODUTO ENCONTRADO" });
+      }
+    } catch (error) {
+      console.log(error);
+  
+      if (res.statusCode === 200) {
+        res.status(500);
+      }
+  
+      if (error instanceof Error) {
+        res.send(error.message);
+      } else {
+        res.send("Erro inesperado");
+      }
     }
-}
-    catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-});
+  };
 
 /*
 export const editProductById = (async (req: Request, res: Response) => {

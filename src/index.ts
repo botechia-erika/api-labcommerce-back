@@ -19,7 +19,7 @@ import songsRouter from "./router/apiMusic/songs";
 import usersRouter from "./router/apiUsers/users";
 import purchasesRouter from "./router/apiAdmin/purchases";
 import phonesRouter from "./router/apiAdmin/phones";
-
+import postsRouter from "./router/apiPosts/posts";
 //import purchasesRouter from './router/purchases'
 const app = express();
 import { ROLES } from "./models/User";
@@ -42,7 +42,7 @@ app.use("/frota", frotaRouter);
 app.use("/songs", songsRouter);
 app.use("/users", usersRouter);
 app.use("/bands", bandsRouter);
-
+app.use("/posts", postsRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("HomePage");
 });

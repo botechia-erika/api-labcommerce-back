@@ -5,7 +5,7 @@ import { ACCOUNT_TYPE, TAccountDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
 /* import fs from 'fs'
 import path from 'path'
-const accountsFilePath = path.join(__dirname, './../../json/dataAccounts.json')
+const accountsFilePath = path.join(__dirname, 'json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
 import { db } from "../../models/knexDB";
 
