@@ -4,12 +4,10 @@ import {v4 as uuidv4} from 'uuid';
 import fs from 'fs'
 import path from 'path'
 import { Posts } from "../../models/Posts";
-import { IPostDB, IPostDetaills } from "../../interfaces/interfaces";
+import { IPostDB, IPostDetails } from "../../interfaces/interfaces";
 import { number } from "zod";
 import { Post } from "../../models/Post";
 import { searchPostReference } from "../../helpers/searchPostReference";
-
-
 
 
 export const createPost = ( async (req: Request, res: Response) => {
@@ -76,7 +74,7 @@ export const createPost = ( async (req: Request, res: Response) => {
            const totalFeedback = 0 as number
            const postReference = postObj.getId()
 
-            const objJS: IPostDetaills ={
+            const objJS: IPostDetails ={
                 id: idDetaills,
                 postImg,
                 tags,
@@ -110,9 +108,10 @@ export const createPost = ( async (req: Request, res: Response) => {
 
 
 export const getAllPosts = async (req: Request, res: Response) => {
-    const detailsFilePath = path.join(__dirname, '../../../src/json/dataPostsDetails.json');
-  
-    const detailsData = JSON.parse(fs.readFileSync(detailsFilePath, 'utf-8'));
+    const detailsDATAFilePath = path.join(__dirname, './../../json/dataPostsDetails.json');
+    const detailsDATA = JSON.parse(fs.readFileSync(detailsDATAFilePath, 'utf-8')) as IPostDetails[];
+    const detailsData = detailsDATA;
+
   
     try {
       const q = req.query.q as string | undefined;
@@ -133,37 +132,44 @@ const result: Posts[] = postsDB.map(post =>(
 )
 )
 
-  
+
 
         res.status(200).send({ message, result });
       } else {
 
 
-        const postDB= await db("posts").where("creator_id", "LIKE", `%${q}%`);
+        const postsDB= await db("posts").where("creator_id", "LIKE", `%${q}%`);
   
-        if (!postDB) {
+        if (!postsDB) {
           res.status(404);
           throw new Error("404: NOME do Produto NÃO Encontrado");
         }
   
-        const postDetails = searchPostReference(detailsData, postDB[0].id)[0];
-  
-        const postSelected: Post = new Post(
-          postDB[0].id,
-          postDB[0].creator_id,
-          postDB[0].content,
-          postDB[0].likes,
-          postDB[0].dislikes,
-          postDB[0].created_at,
-          postDB[0].updated_at,
-          postDetails.id,
-          postDetails.postImg,
-          postDetails.tags,
-          postDetails.feedbackList,
-          postDetails.totalVisits
-        );
-  
-        res.status(200).send({ postSelected, message: "PRODUTO ENCONTRADO" });
+
+        const idDetails = postsDB[0].id
+
+        const postDetails = (detailsData:IPostDetails[], idDetails:string ):any=>{
+            detailsData.filter((post)=>{
+                post.postReference === idDetails?post: null
+            })
+        }
+
+        const postJSON = postDetails(detailsData, idDetails);
+
+        const postDB: Posts[] = postsDB.map(post =>(
+            new Posts(
+                post.id, 
+                post.creator_id,
+                post.content,
+                post.likes,
+                post.dislikes,
+                post.created_at,
+                post.updated_at ,
+            )
+        ))
+
+
+        res.status(200).send({ result: postDB , message: "PRODUTO ENCONTRADO" });
       }
     } catch (error) {
       console.log(error);

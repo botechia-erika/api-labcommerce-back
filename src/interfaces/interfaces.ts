@@ -19,7 +19,7 @@ export interface IProjectDB{
     instructor: string
 }
 
-export  interface IPostDetaills {
+export  interface IPostDetails {
     id: string,
     postImg: string,
     tags: string[],

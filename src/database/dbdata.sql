@@ -9,7 +9,7 @@ createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY(creator_id) REFERENCES  users (id)
 );
-SELECT * FROM posts;
+SELECT * FROM users;
 
 CREATE TABLE likes_dislikes(
  user_id TEXT NOT NULL,
@@ -24,35 +24,50 @@ ON UPDATE CASCADE ON DELETE CASCADE
 
 
 CREATE TABLE USERS (
-    ID TEXT PRIMARY KEY NOT NULL UNIQUE,
-    NAME TEXT NOT NULL,
-    NICKNAME TEXT NOT NULL UNIQUE,
-    EMAIL TEXT NOT NULL UNIQUE,
-    PASSWORD TEXT NOT NULL,
-    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP
+    id TEXT PRIMARY KEY NOT NULL UNIQUE,
+    fullName TEXT NOT NULL,
+    nickname TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    role TEXT NOT NULL DEFAULT 'Normal',
+    avatar TEXT NOT NULL DEFAULT "https://i.postimg.cc/cHP5gD7r/Pngtree-dinosaur-cartoon-avatar-frame-8462697-removebg-preview.png",
+    keyProfile TEXT NOT NULL UNIQUE
 );
 
 DROP TABLE USERS;
 
 INSERT INTO USERS(
-    ID,
-    NAME,
-    NICKNAME,
-    EMAIL,
-    PASSWORD
+    id,
+    fullName,
+    nickname,
+    email,
+    password,
+    created_at,
+    role ,
+    avatar,
+    keyProfile
 ) VALUES (
     "u001",
     "MARCELO REZENDE",
     "MARCELO-REZENDE",
     "marcelo@email.com",
-    "marcelo123"
+    "marcelo123!",
+     "2023-11-27T11:11:18.587Z",
+     "Normal",
+     "https://i.postimg.cc/cHP5gD7r/Pngtree-dinosaur-cartoon-avatar-frame-8462697-removebg-preview.png",
+     "a2e8ca11-6fbb-4bc6-8894-f93fbf547a1c"
 ),
 (
     "u002",
     "LAURA SILVA",
     "lau-silva",
     "lau@email.com",
-    "lau123"
+        "L*u97!",
+     "2023-11-27T11:11:19.587Z",
+     "Normal",
+     "https://i.postimg.cc/cHP5gD7r/Pngtree-dinosaur-cartoon-avatar-frame-8462697-removebg-preview.png",
+     "d57d1690-8323-4233-bc4a-aba9b31cda39"
 );
 
 SELECT
@@ -653,3 +668,16 @@ VALUES
 
 SELECT * FROM accounts;
 -- SQLBook: Markup
+
+
+SELECT * FROM products;
+
+CRETE TABLE post_details(
+    id TEXT PRIMARY KEY NOT NULL UNIQUE, 
+    postImg  TEXT NOT NULL DEFAULT "https://i.postimg.cc/SKDqcQz5/postImg.png",
+    stack TEXT NOT NULL DEFAUL "Generalidades",
+    "postReference": "p001"
+
+)
+
+SELECT * FROM users;

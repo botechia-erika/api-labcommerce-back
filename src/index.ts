@@ -20,6 +20,8 @@ import usersRouter from "./router/apiUsers/users";
 import purchasesRouter from "./router/apiAdmin/purchases";
 import phonesRouter from "./router/apiAdmin/phones";
 import postsRouter from "./router/apiPosts/posts";
+
+import coursesRouter from "./router/apiSchool/courses";
 //import purchasesRouter from './router/purchases'
 const app = express();
 import { ROLES } from "./models/User";
@@ -43,10 +45,11 @@ app.use("/songs", songsRouter);
 app.use("/users", usersRouter);
 app.use("/bands", bandsRouter);
 app.use("/posts", postsRouter);
+app.use("/courses", coursesRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send("HomePage");
 });
 
-app.listen(3003, () => {
+app.listen(3004, () => {
   console.log(`Servidor rodando na porta 3003 `);
 });
