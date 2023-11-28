@@ -50,6 +50,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("HomePage");
 });
 
-app.listen(3004, () => {
+app.listen(3003, () => {
   console.log(`Servidor rodando na porta 3003 `);
 });

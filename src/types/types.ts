@@ -322,3 +322,15 @@ export type TPhoneDB = {
   phone_number: string;
 }
 
+
+/****************REFERENTE A LABESCHOOL************************ */
+
+
+export enum STACKLIST {
+  FUNDAMENTOS="Fundamentos",
+  FRONTEND = "Frontend",
+  BACKEND= "Backend",
+  DATABASE="Database",
+  FULLSTACK="FullStack",
+  TESTING="Testing"
+}
