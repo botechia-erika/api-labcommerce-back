@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyPurchase = exports.createPurchase = exports.getPurchaseById = exports.getAllPurchases = void 0;
-const knexDB_1 = require("../models/knexDB");
+const knexDB_1 = require("../database/knexDB");
 exports.getAllPurchases = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield knexDB_1.db.raw(`select * from purchases`);

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editAccountBalance = exports.createAccount = exports.getAccountBalance = exports.getAllAccounts = void 0;
 const Accounts_1 = require("../../models/Accounts");
-const knexDB_1 = require("../../models/knexDB");
+const knexDB_1 = require("../../database/knexDB");
 exports.getAllAccounts = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountsDB = yield (0, knexDB_1.db)("accounts");

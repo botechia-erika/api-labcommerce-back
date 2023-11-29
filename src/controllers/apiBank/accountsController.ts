@@ -7,7 +7,7 @@ import { createId } from "../../helpers/createId";
 import path from 'path'
 const accountsFilePath = path.join(__dirname, 'json/dataAccounts.json')
 const accountsDATA = JSON.parse(fs.readFileSync(accountsFilePath, 'utf-8')) */
-import { db } from "../../models/knexDB";
+import { db } from "../../database/knexDB";
 
 export const getAllAccounts = (async (req: Request, res: Response) => {
     try {

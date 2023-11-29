@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.destroyProduct = exports.getProductById = exports.editProductById = exports.getAllCars = exports.createCar = void 0;
-const knexDB_1 = require("../../models/knexDB");
+const knexDB_1 = require("../../database/knexDB");
 const createId_1 = require("../../helpers/createId");
 const matchDescriptionCategory_1 = require("../../helpers/matchDescriptionCategory");
 exports.createCar = ((req, res) => __awaiter(void 0, void 0, void 0, function* () {

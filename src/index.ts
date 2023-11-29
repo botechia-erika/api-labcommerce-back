@@ -18,7 +18,7 @@ import frotaRouter from "./router/apiCars/frota";
 import songsRouter from "./router/apiMusic/songs";
 import usersRouter from "./router/apiUsers/users";
 import purchasesRouter from "./router/apiAdmin/purchases";
-import phonesRouter from "./router/apiAdmin/phones";
+import projectsRouter from "./router/apiSchool/projects";
 import postsRouter from "./router/apiPosts/posts";
 
 import coursesRouter from "./router/apiSchool/courses";
@@ -39,11 +39,9 @@ app.get("/ping", (req: Request, res: Response) => {
   res.send("Pong");
 });
 
-app.use("/phones", phonesRouter);
-app.use("/frota", frotaRouter);
-app.use("/songs", songsRouter);
 app.use("/users", usersRouter);
-app.use("/bands", bandsRouter);
+app.use("/projects", projectsRouter);
+
 app.use("/posts", postsRouter);
 app.use("/courses", coursesRouter);
 app.get("/", (req: Request, res: Response) => {

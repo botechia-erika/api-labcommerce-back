@@ -1,4 +1,5 @@
-
+-- Active: 1701229014559@@127.0.0.1@3306
+SELECT * FROM users;
 CREATE TABLE posts (
 id TEXT PRIMARY KEY NOT NULL UNIQUE,
 creator_id TEXT NOT NULL ,
@@ -681,3 +682,22 @@ CRETE TABLE post_details(
 )
 
 SELECT * FROM users;
+
+CREATE TABLE projects (
+            id TEXT PRIMARY KEY NOT NULL UNIQUE,
+            projectName TEXT NOT NULL,
+            author TEXT NOT NULL,
+            stack TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            description TEXT NOT NULL,  
+            deploy  TEXT NOT NULL UNIQUE,
+            repo TEXT NOT NULL UNIQUE,
+            imgUrl TEXT NOT NULL DEFAULT "",
+            likes INTEGER NOT NULL DEFAULT 0,
+            dislikes INTEGER NOT NULL DEFAULT 0,
+            createdAt TEXT NOT NULL ,
+            updateAt TEXT NOT NULL
+);
+
+SELECT * FROM projects;
+--2023-11-29T04:10:33.203Z

@@ -1,3 +1,5 @@
+import { STACKLIST } from "../types/types";
+
 export interface IPostDB {
     id : string;
     creator_id: string;
@@ -9,14 +11,19 @@ export interface IPostDB {
 }
 
 export interface IProjectDB{
-    id: string,
-    name: string, 
-    score: number,
-    status: number,
-    repo: string,
-    deploy: string,
-    author: string,
-    instructor: string
+      id:string,
+      projectName: string,
+     author: string,
+      stack: STACKLIST,
+      score: number,
+      description: string,
+      deploy :string,
+      repo:string,
+      imgUrl:string ,
+     likes :number,
+     dislikes :number,
+      createdAt: string,
+      updateAt: string,
 }
 
 export  interface IPostDetails {

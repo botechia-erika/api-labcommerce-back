@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { db } from "../../models/knexDB";
+import { db } from "../../database/knexDB";
 import {  TProductDB } from '../../types/types';
 import { createId } from "../../helpers/createId";
 import { DESCRIPTION_CATEGORY } from "../../types/types";
@@ -165,20 +165,20 @@ export const editProductById = (async (req: Request, res: Response) => {
             }
 });
 
-export const getProductById =( async (req: Request, res: Response) => {
+export const getCourseById =( async (req: Request, res: Response) => {
 
 
     try {
-        const id = req.params.idDetails
+        const id = req.params.id
         const result = await db.raw(`SELECT * FROM products WHERE id="${id}"`)
 
         if (!result) {
             res.status(404)
-            throw new Error( "PRODUTO  não Cadastrado , verifique o 'id'")
+            throw new Error( "CURSO  não Cadastrado , verifique o 'id'")
         }
         else {
 
-            res.status(200).send({ product: result })
+            res.status(200).send({  result })
         }
     } catch (error) {
         console.log(error)
