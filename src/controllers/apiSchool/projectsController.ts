@@ -160,109 +160,87 @@ export const getAllProjects=( async (req: Request, res: Response) => {
 });
 
 
-export const editProjectById = (async (req: Request, res: Response) => {
+export const editProjectById = async (req: Request, res: Response) => {
     try {
-            const today = new Date().toISOString() as string;
-            const id4Update=  req.params.id as string;
-            const name4Update = req.body.inputName as string | undefined;
-            const author4Update = req.body.inputAuthor as string | undefined;
-            const stack4Update = req.body.inputStack as STACKLIST | undefined;
-            const score4Update = req.body.inputScore as number | undefined;
-            const description4Update =  req.body.inputDescription as string | undefined;
-            const deploy4Update = req.body.inputDeploy as string | undefined;
-            const repo4Update = req.body.inputRepo as   string | undefined;
-            const img4Update = req.body.inputImg as string | undefined;
-            const likes4Update = req.body.inputLikes as 1 | 0;
-            const dislikes4Update = req.body.inputDislikes as 1 | 0;
-            
-    
-            const updatedAt = today;
+        const today = new Date().toISOString() as string;
+        const id = req.params.id as string;
 
-        
-       const [projectExists] = await db("projects").where("id" , "LIKE", `${id4Update}`)
-        
-       
-       if(![projectExists]){
-            res.status(404);
-            throw new Error("404: Produto não cadastrado");
+        // Fetch the project by ID
+        const [projectExists] = await db("projects").where({ id });
+
+        if (!projectExists) {
+            res.status(404).json({ error: "404: Produto não cadastrado" });
+            return;
         }
+
         // Update logic
-        const updatedLikes = likes4Update === 1 ? projectExists.likes + 1 : projectExists.likes;
-        const updatedDislikes = dislikes4Update === 1 ? projectExists.dislikes + 1 : projectExists.dislikes;
-        
+        const likes4Update = req.body.inputLikes as number;
+        const dislikes4Update = req.body.inputDislikes as number;
 
+        const updatedLikes = req.body.inputLike ===1 ? projectExists.likes + 1 : projectExists.likes;
+        const updatedDislikes =  req.body.inputLike ===1 ? projectExists.dislikes + 1 : projectExists.dislikes;
 
+        const updatedAt = today;
 
-    const project4Update = {
-                id :id4Update,
-                projectName : name4Update||projectExists.projectName,
-                stack :stack4Update || projectExists.stack,
-                author :projectExists.author,
-                score: score4Update|| projectExists.score,
-                description : description4Update || projectExists.description,
-                deploy : deploy4Update || projectExists.deploy,
-                repo:repo4Update || projectExists.repo,
-                imgUrl : img4Update || projectExists.imgUrl,
-                likes : updatedLikes,
-                dislikes : updatedDislikes,
-                 createdAt : projectExists.createdAtm,
-                updateAt :  updatedAt
-            }
-        
+        // Prepare the updated project data
+        const project4Update = {
+            id: id,
+            projectName: req.body.inputName || projectExists.projectName,
+            stack: req.body.inputStack || projectExists.stack,
+            author: req.body.inputAuthor || projectExists.author,
+            score: req.body.inputScore || projectExists.score,
+            description: req.body.inputDescription || projectExists.description,
+            deploy: req.body.inputDeploy || projectExists.deploy,
+            repo: req.body.inputRepo || projectExists.repo,
+            imgUrl: req.body.inputImg || projectExists.imgUrl,
+            likes:  req.body.inputLike === 1 ? projectExists.likes+=1 : projectExists.likes,
+            dislikes: req.body.inputDislike === 1 ? projectExists.dislikes+=1 : projectExists.dislikes,
 
+        };
 
-            await db("projects")
-            .update(project4Update)
-            .where({ id: `${id4Update}` });
-                            res.status(200).send({message: "produto atualizado com sucesso", result: projectExists})
-   
-            } catch (error) {
-        console.log(error)
+        // Update the project in the database
+        await db("projects").update(project4Update).where({ id });
 
-        if (req.statusCode === 200) {
-            res.status(500)
+        res.status(200).json({ message: "Produto atualizado com sucesso", result: project4Update });
+    } catch (error) {
+        console.log(error);
+
+        if (res.statusCode != 200) {
+            res.status(500);
         }
 
         if (error instanceof Error) {
-            res.send(error.message)
+            res.json({ error: error.message });
         } else {
-            res.send("Erro inesperado")
+            res.json({ error: "Erro inesperado" });
         }
     }
-}
-)
+};
 
-export const getProductById =( async (req: Request, res: Response) => {
-
-
+export const getProductById = async (req: Request, res: Response) => {
     try {
-        const id = req.params.idDetails
-        const result = await db.raw(`SELECT * FROM products WHERE id="${id}"`)
+        const id = req.params.idDetails;
+        const result = await db("projects").where("id", id);
 
-        if (!result) {
-            res.status(404)
-            throw new Error( "PRODUTO  não Cadastrado , verifique o 'id'")
-        }
-        else {
-
-            res.status(200).send({ product: result })
+        if (!result.length) {
+            res.status(404).json({ error: "PRODUTO não Cadastrado, verifique o 'id'" });
+        } else {
+            res.status(200).json({ product: result[0] });
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
 
-        if (req.statusCode === 200) {
-            res.status(500)
+        if (res.statusCode === 200) {
+            res.status(500);
         }
 
         if (error instanceof Error) {
-            res.send(error.message)
+            res.json({ error: error.message });
         } else {
-            res.send("Erro inesperado")
+            res.json({ error: "Erro inesperado" });
         }
     }
-}
-)
-
+};
 
 export const destroyProduct = ( async (req: Request, res: Response) => {
 
@@ -273,7 +251,7 @@ export const destroyProduct = ( async (req: Request, res: Response) => {
         if (!productDelete) {
             throw new Error("product  nao encontrado")
         }
-        await db("products").delete().where({ id: `${id}`})
+        await db("products").delete().where({id})
         res.status(200).send({ message: 'product deletado com sucesso' })
     }
     catch (error) {
