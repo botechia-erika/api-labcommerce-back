@@ -26,7 +26,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
             userDB.role
           )
       );
-      res.status(200).json(users);
+      res.status(200).json({message: "LISTA DE USUARIOS CADASTRADOS", result: users});
     } 
     if(searchTerm){
       const result: TUserDB[] = await db("users").where(
@@ -36,8 +36,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
       ).whereNot("role", "LIKE" , "Bands")
 
       const userDB = [result]
-      if (!result || result == null) {
-        res.status(404).json({ message: "USER NÃO ENCONTRADO" });
+      if (!result[0]) {
+        res.status(404)
+        throw new Error("404 USER NÃO ENCONTRADO" );
       } else {
         const usersDB = result;
         // criar array de users para instanciar em class User permitindo criar uma lista de usuarios em lugar de unico 
@@ -56,7 +57,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         );
         res
           .status(200)
-          .json({ message: "Resultado para termo buscado", users });
+          .json({ message: "Resultado para termo buscado", result: users });
       }
     }
   } catch (error) {

@@ -21,7 +21,7 @@ type TUserForm = {
 };
 
 export class User {
-  private id: string;
+  private readonly id: string;
   private name: string;
   private nickname: string;
   private email: string;
@@ -29,6 +29,9 @@ export class User {
   private createdAt: string;
   private avatar: string;
   private role: string;
+  //private nicknamePassword : string;
+
+
   constructor(
     id: string,
     name: string,
@@ -37,7 +40,8 @@ export class User {
     email: string,
     createdAt: string,
     avatar: string,
-    role: string
+    role: string,
+  //  namePassword:string
   ) {
     this.id = id;
     this.name = name;
@@ -47,7 +51,7 @@ export class User {
     this.createdAt = createdAt;
     this.avatar = avatar;
     this.role = role;
-  
+   // this.nicknamePassword = nickname + password
   }
 
   // metodos get e setter
@@ -108,14 +112,20 @@ export class User {
   public getCreatedAt(): string {
     return this.createdAt;
   }
-
+ /* public getNicknamePassword(): string {
+    return this.nicknamePassword;
   }
 
-  /*  public validatePassword (inputPassword: string){
-        if(inputPassword === this.getPassword() ){
-            return true 
-        }else{
-            return false
-        }
-       }*/
+  public setNicknamePassword(value: string): void {
+    this.nicknamePassword = value;
+  }
 
+  public validateUser (inputPassword: string, inputNickname:string){
+        if(inputPassword === this.getPassword() && inputNickname === this.getNickname() && this.getNickname()  + this.getPassword()  === this.getNicknamePassword()){
+          this.setNicknamePassword("green")
+          return this.getNicknamePassword()
+        }else{
+            return this.getNicknamePassword()
+        }
+  }*/
+}

@@ -1,228 +1,260 @@
-import { Request, Response } from "express";
-import { db } from "../../database/knexDB";
-import {  TProductDB } from '../../types/types';
-import { createId } from "../../helpers/createId";
-import { DESCRIPTION_CATEGORY } from "../../types/types";
-import { matchDescriptionCategory } from "../../helpers/matchDescriptionCategory";
-import { Product } from "../../models/Product";
-import {v4 as uuidv4} from 'uuid';
-export const createCourse = ( async (req: Request, res: Response) => {
+import { Request, Response } from 'express';
+import { db } from '../../database/knexDB';
+import { v4 as uuidv4 } from 'uuid';
+import { matchDescriptionCategory } from '../../helpers/matchDescriptionCategory';
+import { ICourseDB } from '../../interfaces/interfaces';
+import { Product } from '../../models/Product';
+import { STACKLIST } from '../../types/types';
 
-    try{
-        const newName = req.body.inputName + " " + req.body.inputStack 
-        const newImage = req.body.image_url as string | undefined
-        const newPrice = req.body.price as number
-        const newDescription = "cursos" as string 
-
-       
-        if (typeof newName != typeof "string" ) {
-            res.status(400)
-            throw new Error ('400 nome do deve seguir o formato "MODELO MARCA ANO" ')
-        }
-
-        
-        if (!newImage.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)){
-            res.status(400)
-            throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
-        }
-   
-
-   
-
-        const newProduct: { description: string, id: string, name: string,image_url: string, price: number}= {
-            id:uuidv4(),
-            name:newName,
-            image_url:newImage,
-            description:newDescription,
-            price:newPrice
-        }
-            await db("products").insert(newProduct)
-    
-        res.status(201).send("produto cadastrado com sucesso")
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-})
-
-
-export const getAllCourses =( async (req: Request, res: Response) => {
-
-
+export const createCourse = async (req: Request, res: Response) => {
     try {
-       const searchTerm = req.query.q as string | undefined
-        if(searchTerm === undefined){
-        const message = "LISTA DE PRODUTOS CADASTRADO DO SISTEMA"
-        const result = await db.raw(`SELECT * FROM products WHERE description LIKE "cursos"`)
- 
-       
-        res.status(200).send({ message, result})
-    }else{
-        const searchTerm = req.query.q as string | undefined
-
-
-        if(searchTerm && searchTerm.length < 0 ||searchTerm === "" ){
-            res.status(400)
-            throw new Error('Pesquisa deve ter ao menos 1 caracter')
-        }
-
-       const [result] = await db("products").where("name", "LIKE" , `%${searchTerm}%`).
-       andWhere("description", "LIKE", "cursos")
-        if(!result){
-            res.status(404)
-            throw new Error("404: NOME do Produto NÃO Encontrado")     
-        }
-
+        const { inputName, inputStack, inputImg, inputPrice } = req.body;
+        const courseName: string = inputName + " " + inputStack    
+        const courseId : string = uuidv4()
         
 
-        res.status(200).send({result : [result], message: "PRODUTO ENCONTRADO"})
-    }
-}
-    catch (error) {
-        console.log(error)
 
-        if (req.statusCode === 200) {
-            res.status(500)
+        if (typeof courseName !=  typeof 'string') {
+            res.status(400)
+            throw new Error('400: O nome do curso deve seguir o formato "NOME do curso + STACK"');
+        }
+
+        if (!inputImg.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)) {
+            res.status(400)
+            throw new Error('400: A imagem deve corresponder a um endereço URL válido');
+        }
+
+        const newInstance :Product = new Product(
+            courseId,
+            courseName,
+            "cursos",
+            inputImg,
+            Number(inputPrice)
+        )
+
+        const inputCourse : ICourseDB ={
+            id: newInstance.getId(),
+            name: newInstance.getName(),
+            description: "cursos",      
+            image_url: newInstance.getImageUrl(),
+            price: newInstance.getPrice()
+        }
+
+        await db('products').insert(inputCourse);
+
+        const newCourseDB = await db.raw(`SELECT * FROM products WHERE id LIKE "${newInstance.getId()}"`)
+
+
+        const result: Product[] = newCourseDB.map(
+            (course: ICourseDB) =>
+              new Product(
+                course.id,
+                course.name,
+                course.description,
+                course.image_url,
+                course.price
+              )
+          );
+
+        res.status(201).send({message: 'Curso cadastrado com sucesso',
+        result});
+    } catch (error) {
+        console.log(error);
+
+        if (res.statusCode === 200) {
+            res.status(500);
         }
 
         if (error instanceof Error) {
-            res.send(error.message)
+            res.send(error.message);
         } else {
-            res.send("Erro inesperado")
+            res.send('Erro inesperado');
         }
     }
-});
+};
+
+export const getAllCourses = async (req: Request, res: Response) => {
+    try {
+        const searchTerm = req.query.q as string | undefined;
+
+        if (!searchTerm) {
+            const message = 'LISTA DE CURSOS CADASTRADOS NO SISTEMA';
+            const resultDB = await db('products').where('description', 'LIKE', 'cursos');
+
+            const result: Product[] = resultDB.map(
+                (course: ICourseDB) =>
+                  new Product(
+                    course.id,
+                    course.name,
+                    course.description,
+                    course.image_url,
+                    course.price
+                  )
+              );
+
+            res.status(200).send({ message, result });
+        } else {
+            if (searchTerm.length < 1 || searchTerm === '') {
+                res.status(400).send('Pesquisa deve ter ao menos 1 caracter');
+                return;
+            }
+
+            const resultDB = await db('products').where('name', 'LIKE', `%${searchTerm}%`).andWhere('description', 'LIKE', 'cursos');
+
+            if (resultDB[0]) {
+                res.status(404)
+                throw new Error(`404: Nenhum curso encontrado para "${searchTerm}"`);
+        
+            }
 
 
-export const editProductById = (async (req: Request, res: Response) => {
+            const result: Product[] = resultDB.map(
+                (course: ICourseDB) =>
+                  new Product(
+                    course.id,
+                    course.name,
+                    course.description,
+                    course.image_url,
+                    course.price
+                  )
+              );
+
+            res.status(200).send({ message: `Resultado para "${searchTerm}"`, result });
+        }
+    } catch (error) {
+        console.log(error);
+
+        if (res.statusCode === 200) {
+            res.status(500);
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message);
+        } else {
+            res.send('Erro inesperado');
+        }
+    }
+};
+
+
+
+
+export const getCourseById = async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
-        const nameSelect = req.body.name as undefined  | string
-        const newImg = req.body.image_url as string | undefined;
-        const newPrice = req.body.price as   number | undefined;
+        const resultDB = await db('products').where('id', id).first();
 
-       const productExists = await db("products").where("id" , "LIKE", `${id}`)
-        if(!productExists){
-            res.status(404);
-            throw new Error("404: Produto não cadastrado");
-        }
-
-
-        if (nameSelect !== undefined) {
-            const confereNome = await db.raw(`SELECT name FROM products WHERE id="id"`)
-            if (nameSelect && confereNome !== nameSelect) {
-                res.status(400);
-                throw new Error("Nome do produto cadastrado não deve ser alterado");
-            }
-        }
-
-
-        if (newImg !== undefined) {
-            if (!newImg.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)){
-            res.status(400)
-            throw new Error ("400: imagem deve corresponder a endereço URL VALIDO")
-            }
-        }
-
-        if(newPrice){
-            if(newPrice && typeof newPrice !== typeof Number){
-                res.status(400)
-                throw new Error("400: Preço atualizado deve ser valor numerico valido")
-            }
-        }
-
-        const [product4edit] = await db.raw(`SELECT * FROM products WHERE id="${id}"`);
-        if (product4edit) {
-                product4edit.id = id,
-                product4edit.name = nameSelect||product4edit.name,
-                product4edit.description = matchDescriptionCategory(product4edit.price),
-                product4edit.image_url= newImg|| product4edit.image_url,
-                product4edit.price = newPrice || product4edit.price
-        }
-                await db("products").update(product4edit).where({id :`${id}`})
-                res.status(200).send({message: "produto atualizado com sucesso", result: product4edit})
-            } catch (error) {
-                console.log(error)
-        
-                if (req.statusCode === 200) {
-                    res.status(500)
-                }
-        
-                if (error instanceof Error) {
-                    res.send(error.message)
-                } else {
-                    res.send("Erro inesperado")
-                }
-            }
-});
-
-export const getCourseById =( async (req: Request, res: Response) => {
-
-
-    try {
-        const id = req.params.id
-        const result = await db.raw(`SELECT * FROM products WHERE id="${id}"`)
-
-        if (!result) {
+        if (!resultDB) {
             res.status(404)
-            throw new Error( "CURSO  não Cadastrado , verifique o 'id'")
-        }
-        else {
+            throw new Error(`404: Curso não cadastrado, verifique o ID "${id}"`);
+        } else {
 
-            res.status(200).send({  result })
+            const result: Product = 
+                  new Product(
+                    resultDB.id,
+                    resultDB.name,
+                    resultDB.description,
+                    resultDB.image_url,
+                    resultDB.price
+                  )
+              
+
+            res.status(200).send({message: "CURSO ENCONTRADO NO SISTEMA" , result });
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
 
         if (req.statusCode === 200) {
-            res.status(500)
+            res.status(500);
         }
 
         if (error instanceof Error) {
-            res.send(error.message)
+            res.send(error.message);
         } else {
-            res.send("Erro inesperado")
+            res.send('Erro inesperado');
         }
     }
-}
-)
+};
 
-
-export const destroyProduct = ( async (req: Request, res: Response) => {
-
+export const destroyCourse = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id
+        const id = req.params.id;
 
-        const productDelete = await db("products").where({ id: id })
+        const productDelete = await db('products').where({ id }).first();
+
         if (!productDelete) {
-            throw new Error("product  nao encontrado")
+            res.status(404).send('404: Produto não encontrado');
+            return;
         }
-        await db("products").delete().where({ id: `${id}`})
-        res.status(200).send({ message: 'product deletado com sucesso' })
-    }
-    catch (error) {
-        console.log(error)
+
+        await db('products').where({ id }).delete();
+
+        res.status(200).send({ message: `CURSO com id ${id} deletado com sucesso` });
+    } catch (error) {
+        console.log(error);
 
         if (req.statusCode === 200) {
-            res.status(500)
+            res.status(500);
         }
 
         if (error instanceof Error) {
-            res.send(error.message)
+            res.send(error.message);
         } else {
-            res.send("Erro inesperado")
+            res.send('Erro inesperado');
         }
     }
-})
+};
+export const editCourseById = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        const {  inputImg, inputPrice } = req.body;
+  
+        const product4edit: ICourseDB[] = await db("products").where("id", id);
+  
+        if (!product4edit[0]) {
+            res.status(404).send("404: CURSO NÃO Encontrado");
+            return;
+        }
+  
+        const oldImg: string = product4edit[0].image_url;
+        const dataImg: string = inputImg ? inputImg : oldImg;
+  
+        const oldPrice: number = product4edit[0].price;
+        const dataPrice: number = inputPrice !== undefined ? inputPrice : oldPrice;
+  
+        const newData: Product = new Product(id, product4edit[0].name, "cursos", dataImg, dataPrice);
+  
+        const data4Update: ICourseDB = {
+            id: newData.getId(),
+            name: newData.getName(),
+            description: "cursos",
+            image_url: newData.getImageUrl(),
+            price: newData.getPrice(),
+        };
+  
+        await db("products").where("id", id).update(data4Update);
+  
+        const resultDB = await db("products").where("id", id);
+        const result: Product[] = resultDB.map(
+            (courseDB: ICourseDB) =>
+                new Product(courseDB.id, courseDB.name, courseDB.description, courseDB.image_url, courseDB.price)
+        );
+  
+        res.status(200).send({ message: `Curso com id ${id} atualizado com sucesso`, result });
+    } catch (error) {
+        console.error(error);
+  
+        if (res.statusCode === 200) {
+            res.status(500);
+        }
+  
+        if (error instanceof Error) {
+            res.send(error.message);
+        } else {
+            res.send("Erro inesperado");
+        }
+    }
+  };
 /*import { Request, Response } from "express"
 import {v4 as uuidv4} from 'uuid';
 

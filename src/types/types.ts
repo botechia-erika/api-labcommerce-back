@@ -24,7 +24,11 @@ export type TPerson = {
 export enum ROLE {
     ADMIN = "Admin",
     NORMAL = "Normal",
-    BUYER = "Buyer"
+    BUYER = "Buyer",
+    INSTRUCTOR="Instructor",
+    STUDENT="Student",
+    TEACHER="Teacher",
+    ENTERPRISE    ="Enterprise"
 }
 
 const usuario :TPerson={
@@ -136,8 +140,8 @@ export type Post = {
 
 /* ------------  INICIO API EXPRESS --------------------------- */
 export enum COURSE_STACK {
-  FRONT = "Front-end",
-  BACK = "Back-end"
+  FRONT = "Frontend",
+  BACK = "Backend"
 }
 
 export type TCourse = {
@@ -327,10 +331,10 @@ export type TPhoneDB = {
 
 
 export enum STACKLIST {
-  FUNDAMENTOS="Fundamentos",
-  FRONTEND = "Frontend",
-  BACKEND= "Backend",
-  DATABASE="Database",
-  FULLSTACK="FullStack",
-  TESTING="Testing"
+  FUNDAMENTOS="FUNDAMENTOS",
+  FRONTEND = "FRONTEND",
+  BACKEND= "BACKEND",
+  DATABASE="DATABASE",
+  FULLSTACK="FULLSTACK",
+  TESTING="TESTING"
 }

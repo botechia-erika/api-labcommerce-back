@@ -10,6 +10,39 @@ import { Post } from "../../models/Post";
 import { searchPostReference } from "../../helpers/searchPostReference";
 
 
+
+export const getPostById = (async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      const postDetailsDB  = await db(`SELECT * FROM 
+      posts INNER JOIN posts_details ON posts.id = posts_details.post_reference
+      where posts.id = "${id}"
+      
+      `)
+    
+      if (!postDetailsDB[0]) {
+        res.status(404);
+        throw new Error("'404': POST não encontrado");
+      } else {
+        const result = postDetailsDB[0];
+        res.status(200).json({ message: "detalhes do post ENCONTRADO", result });
+      }
+    } catch (error) {
+      console.log(error);
+  
+      if (req.statusCode === 200) {
+        res.status(500);
+      }
+  
+      if (error instanceof Error) {
+        res.send(error.message);
+      } else {
+        res.send("Erro inesperado");
+      }
+    }
+  });
+  
+
 export const createPost = ( async (req: Request, res: Response) => {
 
     try{

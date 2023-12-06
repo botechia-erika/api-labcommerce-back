@@ -36,3 +36,11 @@ export  interface IPostDetails {
     totalFeedback: number ,
     postReference: string
 }
+
+export interface ICourseDB  {
+    id: string,
+    name: string,
+    description: "cursos",
+    image_url: string,
+    price: number
+}
