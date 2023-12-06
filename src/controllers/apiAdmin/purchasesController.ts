@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { db } from "../../database/knexDB";
 import { createId } from "../../helpers/createId";
+import { v4 as uuidv4 } from 'uuid';
+import { PurchaseList } from "../../models/PurchaseList";
 
 
 // enpoints para purchases
@@ -68,44 +70,25 @@ export const getPurchaseById = ( async (req: Request, res: Response) => {
 
 export const createPurchase = ( async (req: Request, res: Response) => {
             try {
-                // dados do cliente
-                const cpfCnpj = req.body.inputCpfCnpj as string
-                const name = req.body.inputName as string | undefined
-                const nickname = req.body.inputNickname as string|undefined
-                const email = req.body.inputEmail as string | undefined
-                const password = req.body.inputPassword as string | undefined
-                const role = req.body.inputRole as string | undefined
-                const avatar = req.body.inputAvatar as string | undefined
-                
 
-                // dados do produto
-                const purchaseId = req.body.inputId   as string 
-                const purchaseProduct = req.body.inputProduct   as string 
-                const quantity = req.body.inputQuantity as number
-                const finalPrice = req.body.inputFinalPrice as number 
-                const createdAt = new Date().toISOString()
-               
-               // dados valores de pagamento
-                const totalPaid = req.body.inputTotalPaid as number
-                const rest2Pay = finalPrice - totalPaid as number
-                const paid = 0
-           
-                // dados criação da conta de nova aluguel
-                const newAccountId = req.body.accountId as undefined
-                const balance = rest2Pay
-                const ownerId = req.body.inputOwnerId as string | undefined
-                
-                const defineOwnerId = (ownerId:string|undefined)=>{
-                if(!ownerId){
-                   const  newOwner = cpfCnpj
-                   return newOwner
-                }else{
-                    const newOwner = ownerId
-                    return newOwner
-                }
-            }
-               
-                res.send(200).json({message: "cadastro realizado com sucesso" })
+     const purchaseId = uuidv4()
+     const buyer = req.body.inputBuyer as string;
+     const newAccount = uuidv4()
+
+     const purchase4Create = new PurchaseList(
+          purchaseId,
+          buyer,
+          newAccount,
+          0,
+          0,
+          0,     
+          [],
+          0          
+    )   
+
+
+
+         res.send(200).json({message: "cadastro realizado com sucesso" })
                 } catch (error) {
             console.log(error)
     

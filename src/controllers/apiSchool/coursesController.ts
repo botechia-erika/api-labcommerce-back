@@ -5,7 +5,7 @@ import { matchDescriptionCategory } from '../../helpers/matchDescriptionCategory
 import { ICourseDB } from '../../interfaces/interfaces';
 import { Product } from '../../models/Product';
 import { STACKLIST } from '../../types/types';
-
+import { CourseDatabase } from '../../database/CoursesDatabase';
 export const createCourse = async (req: Request, res: Response) => {
     try {
         const { inputName, inputStack, inputImg, inputPrice } = req.body;
@@ -40,9 +40,11 @@ export const createCourse = async (req: Request, res: Response) => {
             price: newInstance.getPrice()
         }
 
-        await db('products').insert(inputCourse);
+        const courseDatabase = new CourseDatabase();
+        courseDatabase.insertCourse(inputCourse);   
 
-        const newCourseDB = await db.raw(`SELECT * FROM products WHERE id LIKE "${newInstance.getId()}"`)
+        const newCourseDB = courseDatabase.findCourseById(`${
+        newInstance.getId()}"`)
 
 
         const result: Product[] = newCourseDB.map(

@@ -1,4 +1,27 @@
-
+export class PurchasedItem{
+     constructor (
+      private readonly id: string,
+      private readonly buyer: string,
+      private readonly amount: number,
+      private readonly createdAt : string, 
+      private readonly purchaseId: string,
+     ) {}
+     public getId(): string {
+      return this.id
+     }
+     public getBuyer():string{
+      return this.buyer
+     }
+     public getAmount():number{
+       return this.amount
+     }
+     public getCreatedAt():string{
+      return this.createdAt
+     }
+     public getPurchaseId():string{
+      return this.purchaseId
+     }
+}
 
 export class PurchaseList{
     constructor(
@@ -7,9 +30,9 @@ export class PurchaseList{
         private  account: string,
         private  totalPrice: number,
         private numberOfPayment: number,
-       private priceOfOnePayment: number ,
-       private  paid :number,
-     
+        private priceOfOnePayment: number ,
+        private readonly paymentsList : PurchasedItem[]=[],
+        private  paid :number,
     ){}
     public getId():string{
         return this.id
@@ -58,7 +81,8 @@ export class PurchaseList{
      }
      public setPaid(value:number):void{
       this.paid= value
-   }
-
-
+     }
+   public addPurchasedItems(purchasedItem:PurchasedItem):void{
+     this.paymentsList.push(purchasedItem)
+     }
 }

@@ -4,51 +4,51 @@ import {v4 as uuidv4} from 'uuid';
 import fs from 'fs'
 import path from 'path'
 import { Posts } from "../../models/Posts";
-import { IPostDB, IPostDetails } from "../../interfaces/interfaces";
-import { number } from "zod";
+import { IPostDB, IPostDetails } from "../../interfaces/interfaces"
 import { Post } from "../../models/Post";
 import { searchPostReference } from "../../helpers/searchPostReference";
 
 
 
-export const getPostById = (async (req: Request, res: Response) => {
-    try {
-      const id = req.params.id;
-      const postDetailsDB  = await db(`SELECT * FROM 
-      posts INNER JOIN posts_details ON posts.id = posts_details.post_reference
-      where posts.id = "${id}"
-      
-      `)
+
+export const getPostById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
     
-      if (!postDetailsDB[0]) {
-        res.status(404);
-        throw new Error("'404': POST não encontrado");
-      } else {
-        const result = postDetailsDB[0];
-        res.status(200).json({ message: "detalhes do post ENCONTRADO", result });
-      }
-    } catch (error) {
-      console.log(error);
-  
-      if (req.statusCode === 200) {
-        res.status(500);
-      }
-  
-      if (error instanceof Error) {
-        res.send(error.message);
-      } else {
-        res.send("Erro inesperado");
-      }
+    const postDetailsDB = await db.raw(`
+    SELECT * FROM posts
+    INNER JOIN post_details ON posts.id = post_details.post_reference
+    WHERE posts.id = "${id}"
+  `);
+
+    if (!postDetailsDB || postDetailsDB.length === 0) {
+      res.status(404)
+    throw new Error( `404: POST não cadastrado, verifique o id '${id}'` );
+    } else {
+      const result = postDetailsDB[0];
+      res.status(200).json({ message: `Post com id: '${id}' encontrado`, result });
     }
-  });
-  
+  } catch (error) {
+    console.error(error);
+
+    if (res.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send('Erro inesperado');
+    }
+  }
+};
+
 
 export const createPost = ( async (req: Request, res: Response) => {
 
     try{
-        const detailsFilePath = path.join(__dirname, './../../../json/dataPostsDetails.json')
 
-        const detailsData = JSON.parse(fs.readFileSync(detailsFilePath, 'utf-8')) 
         // Primeira parte cuida da parte de insercao em DB SQLITE
         const postId = uuidv4() as string
         const creatorId = req.body.inputAuthor as string
@@ -118,10 +118,7 @@ export const createPost = ( async (req: Request, res: Response) => {
                 postReference
             }
 
-            const newDetails = [...detailsData].push(objJS)
-
-            const objJSON = JSON.stringify(newDetails)
-            fs.writeFileSync(detailsFilePath, objJSON)
+            await db("post_details").insert(objJS)
 
         res.status(201).send("produto cadastrado com sucesso")
     } catch (error) {
@@ -141,9 +138,7 @@ export const createPost = ( async (req: Request, res: Response) => {
 
 
 export const getAllPosts = async (req: Request, res: Response) => {
-    const detailsDATAFilePath = path.join(__dirname, './../../json/dataPostsDetails.json');
-    const detailsDATA = JSON.parse(fs.readFileSync(detailsDATAFilePath, 'utf-8')) as IPostDetails[];
-    const detailsData = detailsDATA;
+
 
   
     try {
@@ -169,27 +164,16 @@ const result: Posts[] = postsDB.map(post =>(
 
         res.status(200).send({ message, result });
       } else {
-
-
         const postsDB= await db("posts").where("creator_id", "LIKE", `%${q}%`);
+
   
         if (!postsDB) {
           res.status(404);
           throw new Error("404: NOME do Produto NÃO Encontrado");
         }
-  
 
-        const idDetails = postsDB[0].id
 
-        const postDetails = (detailsData:IPostDetails[], idDetails:string ):any=>{
-            detailsData.filter((post)=>{
-                post.postReference === idDetails?post: null
-            })
-        }
-
-        const postJSON = postDetails(detailsData, idDetails);
-
-        const postDB: Posts[] = postsDB.map(post =>(
+        const result: Posts[] = postsDB.map(post =>(
             new Posts(
                 post.id, 
                 post.creator_id,
@@ -197,12 +181,13 @@ const result: Posts[] = postsDB.map(post =>(
                 post.likes,
                 post.dislikes,
                 post.created_at,
-                post.updated_at ,
+                post.updated_at 
             )
-        ))
+        )
+        )
 
 
-        res.status(200).send({ result: postDB , message: "PRODUTO ENCONTRADO" });
+        res.status(200).json({ result , message: "PRODUTO ENCONTRADO" });
       }
     } catch (error) {
       console.log(error);

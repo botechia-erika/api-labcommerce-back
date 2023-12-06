@@ -44,3 +44,18 @@ export interface ICourseDB  {
     image_url: string,
     price: number
 }
+
+
+
+
+
+export interface IStatsPost {
+    id: string,
+    postImg: string,
+    tags: string[],
+    feedbackList: string[],
+    totalViews: number,
+    totalLikes: number,
+    totalFeedback: number,
+    postReference: string
+}
